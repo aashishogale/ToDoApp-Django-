@@ -1,11 +1,34 @@
 
 <html>
         {% load staticfiles %}
-    <script src="{% static 'Todo/bower_components/angular.js' %}"></script>
-    <script src="{% static 'Todo/bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
-    <link href="{% static 'Todo/bower_components/bootstrap/dist/js/bootstrap.js' %}"></link>
-    <body ng-app="Todo.js">
-        <div ng-view></div>
+       
+        <link  rel="stylesheet" href="{% static 'Todo/bower_components/bootstrap/dist/css/bootstrap.min.css' %}"></link> 
+         <link rel="stylesheet"  href="{% static 'Todo/css/registerlogin.css' %}"></link>
+        <script src="{% static 'Todo/bower_components/jquery/dist/jquery.js' %}"></script>
+
+        <script src="{% static 'Todo/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'Todo/bower_components/angular/angular.js' %}"></script>
+    <script src="{% static 'Todo/bower_components/angular-ui-router/release/angular-ui-router.js' %}"></script>
+
+    
+
+    <script src="{% static 'Todo/script/Todo.js' %}"></script>
+
+    <script src="{% static 'Todo/controller/registrationController.js' %}"></script>
+    <script src="{% static 'Todo/controller/loginController.js' %}"></script>
+    <script src="{% static 'Todo/service/loginService.js' %}"></script> 
+    <script src="{% static 'Todo/service/registerService.js' %}"></script>
+    <script src="{% static 'Todo/script/validation.js' %}"></script>
+    <script src="{% static 'Todo/controller/homeController.js' %}"></script>
+    <script src="{% static 'Todo/service/homeService.js' %}"></script>
+
+    <body ng-app='Todo'>
+            <ui-view></ui-view>
+        {% comment %} <script>
+            var Todo=angular.module('Todo',['ui-router'])
+
+        </script> {% endcomment %}
+        {% comment %} <div ui-view></div> {% endcomment %}
         
     </body>
 </html>

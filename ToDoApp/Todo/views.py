@@ -69,7 +69,10 @@ class UserLoginView(GenericAPIView):
         return Response(status=status.HTTP_200_OK)
 
 class HomeView(GenericAPIView):
+<<<<<<< HEAD
    
+=======
+>>>>>>> djbAuth
     @csrf_exempt
     def post(self, request, *args, **kwargs):
       print(request.META.get('HTTP_TOKEN'))
