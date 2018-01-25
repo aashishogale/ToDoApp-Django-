@@ -1,0 +1,28 @@
+<div class="container py-3">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mx-auto">
+                    <div class="card card-body">
+                        <h3 class="text-center mb-4">Sign-up</h3>
+                      
+                        <fieldset>
+                            <div class="form-group has-success">
+                                <input class="form-control input-lg" placeholder="EmailAddress" name="email" type="text" ng-model="user.email" id="email">
+                                <div class="show"><span id="error"></span></div>
+                            </div>
+                            <div class="form-group has-success">
+                                <input class="form-control input-lg" placeholder="Password" name="password" value="" type="password" ng-model="user.password" id="password">
+                                <div class="showerror"<span id="error"></span></div>
+                            </div>
+                            <div class="form-group has-success">
+                                <input class="form-control input-lg" placeholder="Username" name="password" value="" type="text" ng-model="user.username" id="username">
+                                <div class="showerror"><span id="error"></span></div>
+                            </div>
+                            
+                            
+                            <button class="btn btn-lg btn-primary btn-block"  type="submit" onclick="checkvalid();" ng-click="registerUser()">Sign me up</button>
+                            <a ui-sref='login'>Click here to login</a>
+                        </fieldset>
+                    </div>
+            </div>
+        </div>
+    </div>

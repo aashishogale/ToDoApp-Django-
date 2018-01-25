@@ -1,47 +1,66 @@
 from django.contrib.auth.models import User
-from django.http import Http404,request
+from django.http import Http404,request,HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView, GenericAPIView
 from django.contrib.auth import authenticate, login,logout
 from django.views.decorators.csrf import csrf_exempt
-from Todo.serializers import UserSerializer
+from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer
 from django.utils.decorators import method_decorator
+from rest_framework.authtoken.models import Token
 
 
 # Create your views here.
 
-class UserRegisterView(APIView):
-     @csrf_exempt
-     def post(self, request, format=None):
-        
-        serializer = UserSerializer(data=request.data)
-             
-        if serializer.is_valid():
-          
-            serializer.save()
-         
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+class UserRegisterView(CreateAPIView):
+    
+    authentication_classes = ()
+    permission_classes = ()
+    serializer_class = UserSerializer
+    @csrf_exempt
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        user = serializer.instance
+        token, created = Token.objects.get_or_create(user=user)
+        data = serializer.data
+        data["token"] = token.key
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
        
-        return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
-       
-       
+
+def startlogin(request):
+     return render(request,'Todo/index.html')      
      
     
 
 
-class UserLoginView(APIView):
+class UserLoginView(GenericAPIView):
   
+    
+    authentication_classes = ()
+    permission_classes = ()
+    serializer_class = UserLoginSerializer
     @csrf_exempt
-    def post(self,request,format=None):
-     
-        user = authenticate(request, username=request.data['username'], password=request.data['password'])
-        if user is not None:
-            print ('you are here')
-            login(request,user)
-            return Response(request.data,status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.user
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response(
+                data=TokenSerializer(token).data,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     @csrf_exempt
     def delete(self,request,format=None):
@@ -49,3 +68,10 @@ class UserLoginView(APIView):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
+class HomeView(GenericAPIView):
+    @csrf_exempt
+    def post(self, request, *args, **kwargs):
+      print(request.META.get('HTTP_TOKEN'))
+      token=Token.objects.get(key=request.META.get('HTTP_TOKEN'))  
+      print(token.user_id)
+      return Response(status=status.HTTP_200_OK)
