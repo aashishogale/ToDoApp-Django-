@@ -6,6 +6,8 @@ from django.views.defaults import bad_request
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -14,7 +16,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         user = User.objects.create(**validated_data)
         user.set_password(validated_data['password'])
-      
+        user.is_active=False
         user.save()
 
         return user
@@ -46,3 +48,5 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = ("auth_token",)
+
+
