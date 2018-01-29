@@ -12,9 +12,11 @@ from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer
 from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 from rest_framework_jwt.settings import api_settings
-
+from random import randint
+from django.core.mail import EmailMessage
+from django.core.cache import cache
 # Create your views here.
-
+otp={}
 class UserRegisterView(CreateAPIView):
 
    
@@ -29,6 +31,7 @@ class UserRegisterView(CreateAPIView):
         self.perform_create(serializer)
 
         user = serializer.instance
+      
        # token, created = Token.objects.get_or_create(user=user)
        # data = serializer.data
         #data["token"] = token.key
@@ -110,3 +113,89 @@ class VerifyToken(GenericAPIView):
 
         #print(request.get_absolute_url(self))
        
+class GenerateOTP(GenericAPIView):
+     @csrf_exempt
+     def post(self, request, *args, **kwargs):
+        data=request.data
+        print(data)
+        useremail=data['email']
+        print(useremail)
+        user=User.objects.get(email=useremail)
+        users=User.objects.all()
+        if user in users:
+        
+            randomno=randint(1000, 9999)
+           
+            otp[str(randomno)]=user.email
+            print(otp[str(randomno)])
+            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+            payload = jwt_payload_handler(user)
+            jwttoken = jwt_encode_handler(payload)
+            email = EmailMessage('Subject', str(randomno), to=['ashtest1947@gmail.com'])
+            email.send()
+            return Response(
+                # # data=TokenSerializer(token).data,
+                data= jwttoken,
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+class CheckOTP(GenericAPIView):
+     @csrf_exempt
+     def post(self, request, *args, **kwargs):
+        data=request.data
+        print(data)
+        randomno=data['otp']
+        print(randomno)
+        print(otp)
+        useremail=otp[str(randomno)]
+        print(useremail)
+        user=User.objects.get(email=useremail)
+        users=User.objects.all()
+        if user in users:
+             return Response(
+                # # data=TokenSerializer(token).data,
+                # data= jwttoken,
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ChangePassword(GenericAPIView):
+     @csrf_exempt
+     def post(self, request, *args, **kwargs):
+        print(request.META.get('HTTP_TOKEN'))
+        data=request.data
+        password=data['password']
+        print(password)
+        jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+        jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
+        payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
+        print(payload)
+        username = jwt_get_username_from_payload(payload)
+        print(username)
+        users=User.objects.all()
+        user=User.objects.get(username=username)
+        if user in users:
+             user.set_password(password)
+             user.save()
+             return Response(
+                # # data=TokenSerializer(token).data,
+                # data= jwttoken,
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+

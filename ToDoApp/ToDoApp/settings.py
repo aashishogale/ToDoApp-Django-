@@ -48,13 +48,17 @@ SITE_ID = 1
 
 
 MIDDLEWARE = [
+       'django.middleware.cache.UpdateCacheMiddleware',  
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+ 
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'django.middleware.cache.FetchFromCacheMiddleware', 
 ]
 
 ROOT_URLCONF = 'ToDoApp.urls'
@@ -93,7 +97,12 @@ DATABASES = {
     }
 }
 
-
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'redis_cache.RedisCache',
+#         'LOCATION': '/var/run/redis/redis.sock',
+#     },
+# }
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -132,7 +141,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'ashtest1947@gmail.com'
 
 #Must generate specific password for your app in [gmail settings][1]
-EMAIL_HOST_PASSWORD = os.environ['password']
+EMAIL_HOST_PASSWORD ='alohomora'
 
 EMAIL_PORT = 587
 

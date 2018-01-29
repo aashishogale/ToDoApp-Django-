@@ -50,6 +50,22 @@ app.config([ '$stateProvider', '$urlRouterProvider',
           }
     })
 
+    .state('changepassword', {
+      url: '/changepassword',
+      templateUrl: '/static/Todo/templates/changepassword.html',
+      controller:'loginController',   
+  })
+
+  .state('enteremailforpassword', {
+    url: '/enteremailforpassword',
+    templateUrl: '/static/Todo/templates/enteremailforpassword.html',
+    controller:'loginController',   
+})
+.state('enterotp', {
+  url: '/enterotp',
+  templateUrl: '/static/Todo/templates/enterotp.html',
+  controller:'loginController',   
+})
     .state('/', {
         url: '/',
          resolve: {

@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.sites.models import Site
 from rest_framework_jwt.settings import api_settings
+from django.urls import reverse
 
 class Notes(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -28,8 +29,10 @@ def send_mail(sender, **kwargs):
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
     payload = jwt_payload_handler(user)
     jwttoken = jwt_encode_handler(payload)
-    url = 'http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
-    email = EmailMessage('Subject', url, to=['ashtest1947@gmail.com'])
+    url = 'http://127.0.0.1:8000' + reverse('todo:verifytoken', args=[jwttoken]) 
+    #http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
+    message = 'Dear User, </br> Please verify your email by clicking on the below link '+ url + ' </br></br> Thank you, </br> Todo Team'
+    email = EmailMessage('Subject', message, to=['ashtest1947@gmail.com'])
     email.send()
    
     print(url)

@@ -34,7 +34,10 @@ class UserLoginSerializer(serializers.Serializer):
         self.user = None
 
     def validate(self, attrs):
+        print(attrs)
         self.user = authenticate(username=attrs.get("username"), password=attrs.get('password'))
+        print(self.error_messages)
+  
         if self.user:
             if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
