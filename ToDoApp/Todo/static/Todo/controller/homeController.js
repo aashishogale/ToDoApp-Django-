@@ -15,5 +15,6 @@ toDo.controller('homeController', function($scope, homeService,
 			$scope.error = response.data;
 		});
 	}
+	$scope.imageurl="/static/Todo/img/polar.jpg"
 	getUser()
 })

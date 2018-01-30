@@ -6,7 +6,7 @@ from django.views.defaults import bad_request
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-
+from .models import Notes
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -53,3 +53,15 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ("auth_token",)
 
 
+
+class NoteSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Notes
+        fields = ('title','decsription', 'date_created','owner')
+        extra_kwargs = {'email': {'required':True},'password': {'required':True}}
+    def create(self, validated_data):
+        note= Notes.notemanager.create(**validated_data)
+        
+        
+
+        return note

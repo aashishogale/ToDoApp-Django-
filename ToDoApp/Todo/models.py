@@ -12,7 +12,7 @@ class Notes(models.Model):
     title=models.CharField(max_length=2000)
     description=models.CharField(max_length=2000)
     date_created=models.DateTimeField(auto_now_add=True)
-    
+    notemanager=models.Manager()
 
     def __str__(self):
         return 
@@ -20,19 +20,3 @@ class Notes(models.Model):
     def __unicode__(self):
         return 
 
-@receiver(post_save, sender=User)
-def send_mail(sender, **kwargs):
-    user=User.objects.get(id=kwargs.get('instance').id)
-    request = None
-    from django.core.mail import EmailMessage
-    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-    payload = jwt_payload_handler(user)
-    jwttoken = jwt_encode_handler(payload)
-    url = 'http://127.0.0.1:8000' + reverse('todo:verifytoken', args=[jwttoken]) 
-    #http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
-    message = 'Dear User, </br> Please verify your email by clicking on the below link '+ url + ' </br></br> Thank you, </br> Todo Team'
-    email = EmailMessage('Subject', message, to=['ashtest1947@gmail.com'])
-    email.send()
-   
-    print(url)

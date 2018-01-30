@@ -48,3 +48,7 @@ function checkvalid() {
     }
     return true;
 }
+
+$('[data-toggle="offcanvas"]').click(function () {
+	$('#wrapper').toggleClass('toggled');
+});

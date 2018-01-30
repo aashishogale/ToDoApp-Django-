@@ -15,8 +15,35 @@ from rest_framework_jwt.settings import api_settings
 from random import randint
 from django.core.mail import EmailMessage
 from django.core.cache import cache
+from pyee import EventEmitter
+import asyncio
+from functools import wraps
+
 # Create your views here.
 otp={}
+ee = EventEmitter()
+
+
+
+def tokenvalidate(view_func):
+    @wraps(view_func)
+    def wrap(self, request, *args, **kwargs):
+        # maybe do something before the view_func call
+        print("inside decorator")
+        jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+        jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
+        payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
+        print(payload)
+        username = jwt_get_username_from_payload(payload)
+        print(username)
+        response = view_func(request, *args, **kwargs)
+        users=User.objects.all()
+        user=User.objects.get(username=username)
+        if user in users:
+            return view_func(request, *args, **kwargs)
+
+        
+    return wrap
 class UserRegisterView(CreateAPIView):
 
    
@@ -29,14 +56,18 @@ class UserRegisterView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-
-        user = serializer.instance
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
       
+        user = serializer.instance
+        payload = jwt_payload_handler(user)
+        jwttoken = jwt_encode_handler(payload)
        # token, created = Token.objects.get_or_create(user=user)
        # data = serializer.data
         #data["token"] = token.key
 
         #headers = self.get_success_headers(serializer.data)
+        ee.emit('sendmail',user.email,jwttoken)
         return Response(status=status.HTTP_201_CREATED)
        
 
@@ -172,6 +203,7 @@ class CheckOTP(GenericAPIView):
 
 class ChangePassword(GenericAPIView):
      @csrf_exempt
+     @tokenvalidate
      def post(self, request, *args, **kwargs):
         print(request.META.get('HTTP_TOKEN'))
         data=request.data
@@ -185,16 +217,44 @@ class ChangePassword(GenericAPIView):
         print(username)
         users=User.objects.all()
         user=User.objects.get(username=username)
-        if user in users:
-            User.objects.filter(username=username).update(password=password)
-            return Response(
+        # if user in users:
+        User.objects.filter(username=username).update(password=password)
+        return Response(
                 # # data=TokenSerializer(token).data,
                 # data= jwttoken,
                 status=status.HTTP_200_OK
             )
-        else:
+        
+
+class Returnuser(GenericAPIView):
+     @csrf_exempt
+     def get(self, request, *args, **kwargs):
+            jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+            jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
+            payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
+            print(payload)
+            username = jwt_get_username_from_payload(payload)
+            print(username)
+            user=User.objects.get(username=username)
             return Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                user,
+                    status=status.HTTP_200_OK
+                )
+
+@ee.on('sendmail')
+def sendmail(useremail,jwttoken):
+    print(useremail)
+    print(jwttoken)
+    request = None
+    from django.core.mail import EmailMessage
+  
+    url = 'http://127.0.0.1:8000' + reverse('todo:verifytoken', args=[jwttoken]) 
+    #http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
+    message = 'Dear User, </br> Please verify your email by clicking on the below link '+ url + ' </br></br> Thank you, </br> Todo Team'
+    email = EmailMessage('Subject', message, to=['ashtest1947@gmail.com'])
+    email.send()
+    import time
+    time.sleep(50)
+    print(url)
+    return
 
