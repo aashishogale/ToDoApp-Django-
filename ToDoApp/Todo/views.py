@@ -186,9 +186,8 @@ class ChangePassword(GenericAPIView):
         users=User.objects.all()
         user=User.objects.get(username=username)
         if user in users:
-             user.set_password(password)
-             user.save()
-             return Response(
+            User.objects.filter(username=username).update(password=password)
+            return Response(
                 # # data=TokenSerializer(token).data,
                 # data= jwttoken,
                 status=status.HTTP_200_OK

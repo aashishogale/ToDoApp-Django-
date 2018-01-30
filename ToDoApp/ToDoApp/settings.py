@@ -141,7 +141,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'ashtest1947@gmail.com'
 
 #Must generate specific password for your app in [gmail settings][1]
-EMAIL_HOST_PASSWORD ='alohomora'
+EMAIL_HOST_PASSWORD =''
 
 EMAIL_PORT = 587
 
