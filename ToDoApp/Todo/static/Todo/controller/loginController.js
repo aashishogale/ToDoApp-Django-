@@ -1,5 +1,23 @@
+// import { setTimeout } from "timers";
+
+// import { request } from "http";
+
 var toDo = angular.module('Todo');
-toDo.controller('loginController', function($scope, loginService,
+
+// var sum = function(a,b,myCallback){
+// 	 setTimeout(() => {
+// 		if(typeof myCallback == "function")
+// 			myCallback(null,a+b);
+// 		else
+// 			return a+b;
+// 	}, 500);
+// }
+// var result = sum(10,20);
+// console.log(result);
+// sum(10,20,function(err,data){
+// 	console.log(data);
+// });
+toDo.controller('loginController', function($scope, restService,
 		$location,$auth) {
 	$scope.loginUser = function() {
 		console.log($scope.user);
@@ -11,6 +29,8 @@ toDo.controller('loginController', function($scope, loginService,
 			$auth.setToken(response.data)
 			// //console.log("this is "+response.data.auth_token)
 			//localStorage.setItem("Token",response.data)
+			localStorage.setItem("token",response.data.token)
+			localStorage.setItem("id",response.data.id)
 	        $location.path('/home');
 
 		}, function(response) {
@@ -21,7 +41,7 @@ toDo.controller('loginController', function($scope, loginService,
 	$scope.generateOtp = function() {
 		console.log($scope.user);
 		
-		var service=loginService.service('POST','generateOTP',$scope.user);
+		var service=restService.service('POST','generateOTP',$scope.user);
 		service.then(function(response) {
 
 			console.log(response);
@@ -38,7 +58,7 @@ toDo.controller('loginController', function($scope, loginService,
 	$scope.checkOtp = function() {
 //		console.log($scope.user);
 		
-		var service=loginService.service('POST','checkOTP',$scope.user);
+		var service=restService.service('POST','checkOTP',$scope.user);
 		service.then(function(response) {
 
 			console.log(response);
@@ -56,7 +76,7 @@ toDo.controller('loginController', function($scope, loginService,
 	$scope.changepassword = function() {
 				console.log($scope.user);
 				
-		var service=loginService.service('POST','changepassword',$scope.user);
+		var service=restService.service('POST','changepassword',$scope.user);
 				service.then(function(response) {
 		
 					console.log(response);

@@ -12,7 +12,7 @@ class Notes(models.Model):
     title=models.CharField(max_length=2000)
     description=models.CharField(max_length=2000)
     date_created=models.DateTimeField(auto_now_add=True)
-    notemanager=models.Manager()
+    objects=models.Manager()
 
     def __str__(self):
         return 
@@ -20,3 +20,16 @@ class Notes(models.Model):
     def __unicode__(self):
         return 
 
+
+class Note(models.Model):
+    owner=models.ForeignKey(User,on_delete=models.CASCADE)
+    title=models.CharField(max_length=2000)
+    description=models.CharField(max_length=2000)
+    date_created=models.DateTimeField(auto_now_add=True)
+    objects=models.Manager()
+
+    def __str__(self):
+        return 
+
+    def __unicode__(self):
+        return 

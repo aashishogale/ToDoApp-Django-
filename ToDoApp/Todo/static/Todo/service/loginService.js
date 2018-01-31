@@ -1,16 +1,17 @@
 var toDo = angular.module('Todo');
 
-toDo.factory('loginService', function($http, $location) {
+toDo.factory('restService', function($http, $location) {
 
 	var details = {};
 	
-	details.service = function(method, url, user) {
+	details.service = function(method, url, data) {
 		var httpobj={
 			method : method,
 			url : url,
 		
 			headers:{
-				token:localStorage.getItem('token')
+				token:localStorage.getItem('token'),
+				id:localStorage.getItem('id')
 			}
 		}
 		if(method=='get'||method=='GET'){

@@ -1,7 +1,8 @@
 <div class="container">
 
     <nav class="navbar fixed-top row  justify-content-start" style="background-color:#fb0">
-        <i class="fa fa-align-justify fa-2x  padding-0" aria-hidden="true"></i>
+        
+        <i type="button"class="fa fa-align-justify fa-2x  padding-0" data-toggle="collapse" data-target="#sidebarcollapse" aria-hidden="true"></i>
         <a class="navbar-brand col-2 padding-0" href="#">Google keep</a>
 
         <div class="input-group col-5 padding-0">
@@ -16,35 +17,94 @@
         </div>
 
         <div class="dropdown navbar-right">
-            <div class="btn dropdown-toggle" type="button"
-                data-toggle="dropdown" ng-click="getuser();">
-               
-                <img src="{{imageurl}}" class="img-circle"
-                    style="height: 35px; border-radius:50%;">
-            </div>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li><div>{{user.name}}</div></li>
-            <li><div>{{user.email}}</div></li>
-            <li><div class="signout" ng-click=logout();>signout</div></li>
-        </ul>
+          <!-- <div class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background:transparent;height: 35px; border-radius:50%; background-image:{{imageurl}}"ng-click="getuser();">  -->
+
+                <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" src="{{imageurl}}"  style="height: 50px; border-radius:50%;" ng-click="changeClass();">
+       
+            <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
+                <li>
+                    <div>{{user.name}}</div>
+                </li>
+                
+                <li>
+                    <div class="signout" ng-click=logout();>signout</div>
+                </li>
+            </ul>
         </div>
+    
     </nav>
 
 </div>
-<div class="wrapper">
+<div class="wrapper row">
 
-    <nav id="sidebar fixed-left">
-        <!-- Sidebar Header -->
-      
 
-        <!-- Sidebar Links -->
-        <ul class="list-unstyled components">
-            <li class="active"><a href="#">notes</a></li>
-            <li><a href="#">reminders</a></li>
+<div class="collapse show col-md-2" id="sidebarcollapse">
+    <nav id="sidebar" class="navbar  fixed-left col-md-3">
+        <div class="container-fluid">
+            <div class="row">
+                <ul class="list-unstyled components">
+
+
+                    <li>
+                        <a href="#!/home">Notes</a>
+                    </li>
+                    <li>
+                        <a href='#!/reminder'>Reminders</a>
+                    </li>
+                    <li>
+                        <a href="#!/trash">Trash</a>
+                    </li>
+                    <li>
+                        <a href="#!/archive">Archive</a>
+                    </li>
+                </ul>
+            </div>
             
-            <li><a href="#"></a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-      
+       
+
+        </div>
+
+    </nav>
+    </div>
+
+    <div class="container col-md-9" ng-init="showthis=true" >
+
+		<!-------------------------- createNote -------------------------------------------------------->
+		<div class="row "  style=" margin-left:10%;" >
+			<div class="bootcreate col-md-10 "  >
+				<div class="show-create" ng-show="showthis"
+					ng-click="show=true; showthis=false">
+					<label>take a note</label>
+				</div>
+			</div>
+			<div class="bootcreatenote col-md-9" >
+				<div class="create-note container" ng-show="show" >
+					<div class="row noteadd" style="margin-left:5%">
+
+						<input ng-model="note.title" type="textbox"
+							style="width: 80%; outline: none;" contentEditable="true"
+							class="addTitle"  data-placeholder="title" >
+					</div>
+					<hr></hr>
+					<div class="row noteadd" style="margin-left:5%">
+
+
+						<textarea ng-model="note.description" class="addTitle"
+							style="width: 80%; outline: none" aria-multiline="true"
+							contentEditable="true" 
+							data-placeholder="take a note" ></textarea>
+					</div>
+					<hr></hr>
+					<div class="row noteadd">
+                        <div class="col-md-8"></div>
+						<input type="submit"
+							ng-click="createNote(note);show=false;showthis=true"
+							class="noteenter">
+					</div>
+				</div>
+
+			</div>
+
+		</div>
 
 </div>

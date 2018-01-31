@@ -8,16 +8,18 @@ from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from django.contrib.auth import authenticate, login,logout
 from django.views.decorators.csrf import csrf_exempt
-from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer
+from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer
 from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 from rest_framework_jwt.settings import api_settings
 from random import randint
+from .models import Notes
 from django.core.mail import EmailMessage
 from django.core.cache import cache
 from pyee import EventEmitter
 import asyncio
 from functools import wraps
+from rest_framework import generics
 
 # Create your views here.
 otp={}
@@ -91,10 +93,17 @@ class UserLoginView(GenericAPIView):
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
             payload = jwt_payload_handler(user)
             jwttoken = jwt_encode_handler(payload)
+            data={
+                "username":user.username,
+                "id":user.id,
+                "token":jwttoken
+
+            }
             return Response(
                 # data=TokenSerializer(token).data,
-                data= jwttoken,
+                data=data,
                 status=status.HTTP_200_OK,
+                
             )
         else:
             return Response(
@@ -258,3 +267,26 @@ def sendmail(useremail,jwttoken):
     print(url)
     return
 
+class NoteList(generics.ListAPIView):
+    def get_queryset(self):
+        # jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+        # jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
+  
+    
+        # payload = jwt_decode_handler()
+        # print("this is",payload)
+        # username = jwt_get_username_from_payload(payload)
+        # print(username)
+        id= self.request.META.get('HTTP_ID')
+        print("this is id",id)
+        user=User.objects.get(id=id)
+        queryset=Notes.objects.filter(owner=user)
+        return queryset
+
+    serializer_class = NoteSerializer
+
+class CreateNote(generics.CreateAPIView):
+     serializer_class = NoteSerializer
+class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Notes.objects.all()
+    serializer_class = NoteSerializer

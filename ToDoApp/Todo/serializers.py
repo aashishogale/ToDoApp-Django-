@@ -54,14 +54,15 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 
-class NoteSerializer(serializers.HyperlinkedModelSerializer):
+class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notes
-        fields = ('title','decsription', 'date_created','owner')
-        extra_kwargs = {'email': {'required':True},'password': {'required':True}}
-    def create(self, validated_data):
-        note= Notes.notemanager.create(**validated_data)
+        fields = ('title','description', 'date_created','owner')
+       
+    # def create(self, validated_data):
+    #     note= Notes.notemanager.create(**validated_data)
         
         
 
-        return note
+    #     return note
+
