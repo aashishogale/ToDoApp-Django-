@@ -105,6 +105,39 @@
 
 			</div>
 
-		</div>
+
+
+            <div class="row collapsed " id="display-notes" >
+                <div id="note" clicknote
+                    ng-repeat=" note in
+                        Notelist"
+                    class="{{checked}}">
+                 
+    
+    
+                    <div class="row noteadd" >
+    
+                        <div ng-bind-html="note.title" ng-click="openCustomModal(note);" style="margin-left:10%"></div>
+                    </div>
+    
+    
+                    <hr></hr>
+                    <div class="row noteadd">
+    
+                        <div ng-bind-html="note.description"
+                             ng-click="openCustomModal(note);" class="desc flex-container" style="margin-left:10%"></div>
+                    </div>
+    
+    
+    
+    
+    
+    
+    
+                </div>
+    
+        </div>
+        
+
 
 </div>

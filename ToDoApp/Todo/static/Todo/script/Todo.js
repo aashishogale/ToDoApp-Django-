@@ -1,4 +1,4 @@
-var app=angular.module('Todo',['ui.router','satellizer'])
+var app=angular.module('Todo',['ui.router','satellizer','ngSanitize'])
 console.log("entered module")
 app.config([ '$stateProvider', '$urlRouterProvider',
 		function($stateProvider, $urlRouterProvider,stateService) {
@@ -45,7 +45,8 @@ app.config([ '$stateProvider', '$urlRouterProvider',
     .state('home', {
         url: '/home',
         templateUrl: '/static/Todo/templates/home.html',
-        controller:'homeController',   resolve: {
+        controller:'homeController',
+        cache: false,   resolve: {
             loginRequired: loginRequired
           }
     })

@@ -2,12 +2,14 @@ from django.contrib.auth.models import User
 from django.http import Http404,request,HttpResponseRedirect
 from django.shortcuts import render,reverse,render,redirect
 
-from rest_framework import status
+from rest_framework import status, generics, serializers, viewsets
+# from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from django.contrib.auth import authenticate, login,logout
 from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.cache import never_cache
 from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer
 from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
@@ -19,7 +21,9 @@ from django.core.cache import cache
 from pyee import EventEmitter
 import asyncio
 from functools import wraps
-from rest_framework import generics
+import redis
+# from rest_framework import 
+
 
 # Create your views here.
 otp={}
@@ -32,13 +36,14 @@ def tokenvalidate(view_func):
     def wrap(self, request, *args, **kwargs):
         # maybe do something before the view_func call
         print("inside decorator")
-        jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-        jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-        payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
-        print(payload)
-        username = jwt_get_username_from_payload(payload)
-        print(username)
-        response = view_func(request, *args, **kwargs)
+        # jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+        # jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
+        # payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
+        # print(payload)
+        # username = jwt_get_username_from_payload(payload)
+        # print(username)
+        # response = view_func(request, *args, **kwargs)
+        username=redis.get(jwttoken)
         users=User.objects.all()
         user=User.objects.get(username=username)
         if user in users:
@@ -93,6 +98,10 @@ class UserLoginView(GenericAPIView):
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
             payload = jwt_payload_handler(user)
             jwttoken = jwt_encode_handler(payload)
+        
+            cache=redis.StrictRedis(host='localhost',decode_responses=True)
+            cache.set(jwttoken,user.username)
+           
             data={
                 "username":user.username,
                 "id":user.id,
@@ -117,19 +126,7 @@ class UserLoginView(GenericAPIView):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
-class HomeView(GenericAPIView):
-    @csrf_exempt
-    def post(self, request, *args, **kwargs):
-      print(request.META.get('HTTP_TOKEN'))
-    #   token=Token.objects.get(key=request.META.get('HTTP_TOKEN'))  
-      jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-      jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-      payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
-      print(payload)
-      username = jwt_get_username_from_payload(payload)
-      print(username)
-    #   print(token.user_id)
-      return Response(status=status.HTTP_200_OK)
+
 
 class VerifyToken(GenericAPIView):
     @csrf_exempt
@@ -209,6 +206,18 @@ class CheckOTP(GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+class UserLogoutView(GenericAPIView):
+    @csrf_exempt
+    def get(self, request, *args, **kwargs):
+        jwttoken=request.META.get('HTTP_TOKEN')
+  
+        cache=redis.StrictRedis(host='localhost',decode_responses=True)
+        cache.delete(jwttoken)
+        return Response(
+                # # data=TokenSerializer(token).data,
+                # data= jwttoken,
+                status=status.HTTP_200_OK
+            )
 
 class ChangePassword(GenericAPIView):
      @csrf_exempt
@@ -267,26 +276,30 @@ def sendmail(useremail,jwttoken):
     print(url)
     return
 
+
 class NoteList(generics.ListAPIView):
+ 
+    serializer_class = NoteSerializer
+    queryset=Notes.objects.all()
     def get_queryset(self):
-        # jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-        # jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-  
-    
-        # payload = jwt_decode_handler()
-        # print("this is",payload)
-        # username = jwt_get_username_from_payload(payload)
-        # print(username)
-        id= self.request.META.get('HTTP_ID')
+        id=self.request.META.get('HTTP_ID')
         print("this is id",id)
         user=User.objects.get(id=id)
-        queryset=Notes.objects.filter(owner=user)
-        return queryset
+        queryset=Notes.objects.filter(owner=user)[:30]
+      
+      
+        # serializer_class = NoteSerializer(Notes, context={"request": request})
+        #print(queryset)
+        if queryset:
+          return queryset
 
-    serializer_class = NoteSerializer
+    # serializer_class = NoteSerializer #(Notes, context={"request": request})
 
 class CreateNote(generics.CreateAPIView):
+     print("inside create")
      serializer_class = NoteSerializer
+
+     
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Notes.objects.all()
     serializer_class = NoteSerializer

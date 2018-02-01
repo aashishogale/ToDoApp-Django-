@@ -5,16 +5,21 @@ toDo.factory('restService', function($http, $location) {
 	var details = {};
 	
 	details.service = function(method, url, data) {
+		console.log("this url is hit" +url);
 		var httpobj={
 			method : method,
 			url : url,
 		
 			headers:{
 				token:localStorage.getItem('token'),
-				id:localStorage.getItem('id')
+				id:localStorage.getItem('id'),
+				'Cache-Control' : 'no-cache'
+				
+			
 			}
 		}
 		if(method=='get'||method=='GET'){
+			console.log("inside here");
 			httpobj.params=data;
 		}
 		else
