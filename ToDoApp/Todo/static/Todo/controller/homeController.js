@@ -16,6 +16,8 @@ toDo.controller('homeController', function($scope,restService,
     getallnotes();
     $scope.createNote=function(note){
 		note.owner=localStorage.getItem("id")
+	
+		note.description=$("#description").html();
 		console.log(note)
 		var service=restService.service('POST','createnote',note);
 		service.then(function(response){
@@ -42,5 +44,19 @@ toDo.controller('homeController', function($scope,restService,
 		})
 	
 	};
+
+	$scope.openCustomModal = function(note) {
+		$scope.note = note
+		$uibModal.open({
+			scope : $scope,
+			state : $state,
+			templateUrl : 'template/EditNote.html',
+			parent : angular.element(document.body)
+
+		}).result.then(function() {
+		}, function(res) {
+		});
+
+	}
  
 })

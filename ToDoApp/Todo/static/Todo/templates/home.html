@@ -35,7 +35,8 @@
     </nav>
 
 </div>
-<div class="wrapper row">
+<div class="wrapper row " style="max-width: 100%;
+overflow-x: hidden;">
 
 
 <div class="collapse show col-md-2" id="sidebarcollapse">
@@ -67,7 +68,7 @@
     </nav>
     </div>
 
-    <div class="container col-md-9" ng-init="showthis=true" >
+    <div class="container col-md-9" ng-init="showthis=true"  >
 
 		<!-------------------------- createNote -------------------------------------------------------->
 		<div class="row "  style=" margin-left:10%;" >
@@ -77,7 +78,7 @@
 					<label>take a note</label>
 				</div>
 			</div>
-			<div class="bootcreatenote col-md-9" >
+			<div class="bootcreatenote col-md-12" >
 				<div class="create-note container" ng-show="show" >
 					<div class="row noteadd" style="margin-left:5%">
 
@@ -89,10 +90,10 @@
 					<div class="row noteadd" style="margin-left:5%">
 
 
-						<textarea ng-model="note.description" class="addTitle"
+						<div role="textbox" contenteditable="true" ng-model="note.description" class="addTitle"
 							style="width: 80%; outline: none" aria-multiline="true"
 							contentEditable="true" 
-							data-placeholder="take a note" ></textarea>
+							data-placeholder="take a note" id="description" ></textarea>
 					</div>
 					<hr></hr>
 					<div class="row noteadd">
