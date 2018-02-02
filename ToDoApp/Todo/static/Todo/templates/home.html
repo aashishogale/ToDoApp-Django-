@@ -1,6 +1,5 @@
 <div class="container">
-
-    <div class="wrapper  " id="wrapper">
+    <div class="wrapper" id="wrapper">
         <nav class="navbar fixed-top row  justify-content-start" style="background-color:#fb0">
             <div class="col-1">
                 <button type="button" class="hamburger is-closed" data-toggle="offcanvas">
@@ -131,17 +130,16 @@
             </div>
 
             <div class="row " ng-show="grid=true">
-                <section id="pinBoot">
-
-                    <article class="white-panel" ng-repeat="note in Notelist" >
-                        <h4 ng-bind-html="note.title" ></h4>
-                        <p ng-bind-html="note.description"></p>
-                    </article>
-
-                </section>
-                <hr>
+                <div class="masonry-grid">
+                    <articlelist>
+                        <card ng-repeat="note in Notelist" class="card">
+                            <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);"></h4>
+                            <p ng-bind-html="note.description" ng-click="openCustomModal(note);"></p>
+                        </card>
+                    </articlelist>
+                </div>
             </div>
-            
+
         </div>
 
     </div>

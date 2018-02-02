@@ -1,30 +1,14 @@
 var toDo = angular.module('Todo');
 toDo.controller('homeController', function ($scope, restService,
 	$location, $state, $uibModalStack, $uibModal) {
-	$scope.gridelistDOM;
-	angular.element(document).ready(function () {
-		console.log("inside grid")
-		$scope.gridelistDOM = $('#pinBoot').pinterest_grid({
-			no_columns: 3,
-			padding_x: 10,
-			padding_y: 10,
-			margin_bottom: 50,
-			single_column_breakpoint: 700
-		});
-		// $scope.gridlist();
-	});
+	
 	$scope.isGrid = true
 	$scope.gridlist = function () {
 		if ($scope.isGrid) {
-			$scope.gridelistDOM.pinterest_grid1({
-				no_columns: 1
-			});
+			$('.card').css("width", "32%");
 			$scope.isGrid=false
 		}else{
-			$state.reload()
-			$scope.gridelistDOM.pinterest_grid({
-				no_columns: 3
-			});
+			$('.card').css("width", "100%");
 			$scope.isGrid=true
 		}
 	}
@@ -73,11 +57,13 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.openCustomModal = function (note) {
 		$scope.note = note
-		$uibModal.open({
-			scope: $scope,
-			state: $state,
+		
+		$scope.$modalInstance =$uibModal.open({
 			templateUrl: '/static/Todo/templates/EditNote.html',
-			parent: angular.element(document.body)
+			scope: $scope,
+
+	
+	
 
 		}).result.then(function () {
 		}, function (res) {

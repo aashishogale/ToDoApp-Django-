@@ -417,3 +417,30 @@ a:hover {
     /* background-color: rgba(250,250,250,.8); 
     z-index: 1; */
 }
+
+
+
+
+/* grid css */
+
+*, *:before, *:after {
+    box-sizing: border-box !important;
+  }
+  
+  articlelist {
+    -moz-column-width: 13em;
+    -webkit-column-width: 13em;
+    -moz-column-gap: 1em;
+    -webkit-column-gap: 1em;
+  }
+  
+  .card {
+    display: inline-block;
+    margin: 0.25rem;
+    padding: 1rem;
+    width: 100%;
+  }
+  .modal {
+	display: block;
+}
+  
