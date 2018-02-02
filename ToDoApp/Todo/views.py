@@ -285,7 +285,7 @@ class NoteList(generics.ListAPIView):
         id=self.request.META.get('HTTP_ID')
         print("this is id",id)
         user=User.objects.get(id=id)
-        queryset=Notes.objects.filter(owner=user)[:30]
+        queryset=Notes.objects.filter(owner=user)[:100]
       
       
         # serializer_class = NoteSerializer(Notes, context={"request": request})

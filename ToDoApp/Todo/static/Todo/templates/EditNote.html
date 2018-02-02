@@ -1,3 +1,6 @@
-<html>
-    hello
-</html>
+<div class="container">
+        <article class="white-panel" ng-repeat="note in Notelist" ng-click="openCustomModal(note);">
+                <h4 ng-bind-html="note.title"></h4>
+                <p ng-bind-html="note.description"></p>
+            </article>
+</div>
