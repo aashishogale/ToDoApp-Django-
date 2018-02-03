@@ -283,3 +283,7 @@ class CreateNote(generics.CreateAPIView):
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Notes.objects.all()
     serializer_class = NoteSerializer
+
+class CreateProfile(generics.UpdateAPIView):
+     print("inside create")
+     serializer_class = NoteSerializer

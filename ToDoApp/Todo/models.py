@@ -24,12 +24,10 @@ class Notes(models.Model):
     def __unicode__(self):
         return 
 
-
-class Note(models.Model):
+class Profile(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
-    title=models.CharField(max_length=2000)
-    description=models.CharField(max_length=2000)
-    date_created=models.DateTimeField(auto_now_add=True)
+    
+    photo = models.ImageField(blank=True,upload_to='entity_images')
     objects=models.Manager()
 
     def __str__(self):
