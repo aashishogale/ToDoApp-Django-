@@ -12,6 +12,10 @@ class Notes(models.Model):
     title=models.CharField(max_length=2000)
     description=models.TextField(max_length=2000)
     date_created=models.DateTimeField(auto_now_add=True)
+    isArchived=models.BooleanField(default=False)
+    isPinned=models.BooleanField(default=False)
+    isTrashed=models.BooleanField(default=False)
+    last_modified = models.DateTimeField(auto_now=True)
     objects=models.Manager()
 
     def __str__(self):

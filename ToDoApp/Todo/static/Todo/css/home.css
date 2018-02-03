@@ -438,9 +438,27 @@ a:hover {
     display: inline-block;
     margin: 0.25rem;
     padding: 1rem;
-    width: 100%;
+    width: 100%
+  }
+
+  .image-upload > input
+{
+    display: none;
+}
+  .login {
+
+    width: 100%
   }
   .modal {
 	display: block;
 }
-  
+  .fade{
+  opacity: 1;    
+  }
+
+  .grid{
+    width:32%;
+  }
+  .list{
+    width:100%;
+  }

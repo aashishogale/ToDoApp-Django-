@@ -6,6 +6,8 @@ toDo.factory('restService', function($http, $location) {
 	
 	details.service = function(method, url, data) {
 		console.log("this url is hit" +url);
+		console.log(data)
+	
 		var httpobj={
 			method : method,
 			url : url,
@@ -21,10 +23,12 @@ toDo.factory('restService', function($http, $location) {
 		if(method=='get'||method=='GET'){
 			console.log("inside here");
 			httpobj.params=data;
+		
 		}
 		else
 		{
 			httpobj.data=data;
+			
 		}
 		// return $http({
 		// 	method : method,

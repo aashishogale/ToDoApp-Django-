@@ -68,6 +68,16 @@ app.config(['$stateProvider', '$urlRouterProvider',
         templateUrl: '/static/Todo/templates/EditNote.html',
         controller: 'homeController',
       })
+      .state('archivenote', {
+        url: '/archivenote',
+        templateUrl: '/static/Todo/templates/archivednote.html',
+        controller: 'homeController',
+      })
+      .state('trashnote', {
+        url: '/trashnote',
+        templateUrl: '/static/Todo/templates/trashnote.html',
+        controller: 'homeController',
+      })
       .state('enterotp', {
         url: '/enterotp',
         templateUrl: '/static/Todo/templates/enterotp.html',

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,7 +134,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
-
+JWT_AUTH={
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1)
+}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_USE_TLS = True

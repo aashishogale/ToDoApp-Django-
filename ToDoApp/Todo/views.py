@@ -31,26 +31,6 @@ ee = EventEmitter()
 
 
 
-def tokenvalidate(view_func):
-    @wraps(view_func)
-    def wrap(self, request, *args, **kwargs):
-        # maybe do something before the view_func call
-        print("inside decorator")
-        # jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-        # jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-        # payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
-        # print(payload)
-        # username = jwt_get_username_from_payload(payload)
-        # print(username)
-        # response = view_func(request, *args, **kwargs)
-        username=redis.get(jwttoken)
-        users=User.objects.all()
-        user=User.objects.get(username=username)
-        if user in users:
-            return view_func(request, *args, **kwargs)
-
-        
-    return wrap
 class UserRegisterView(CreateAPIView):
 
    
@@ -221,7 +201,7 @@ class UserLogoutView(GenericAPIView):
 
 class ChangePassword(GenericAPIView):
      @csrf_exempt
-     @tokenvalidate
+    
      def post(self, request, *args, **kwargs):
         print(request.META.get('HTTP_TOKEN'))
         data=request.data
@@ -285,7 +265,7 @@ class NoteList(generics.ListAPIView):
         id=self.request.META.get('HTTP_ID')
         print("this is id",id)
         user=User.objects.get(id=id)
-        queryset=Notes.objects.filter(owner=user)[:100]
+        queryset=Notes.objects.filter(owner=user).order_by('-last_modified')[:100]
       
       
         # serializer_class = NoteSerializer(Notes, context={"request": request})

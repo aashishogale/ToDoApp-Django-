@@ -1,4 +1,24 @@
-<div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+<div class="modal-body">
+  <div class="bootcreatenote col-md-12">
+    <div class="create-note container">
+      <div class="row noteadd" style="margin-left:5%">
+        <div role="textbox" contenteditable="true" ng-model="note.title" ng-bind-html="note.title" class="title" style="width: 80%; outline: none"
+          aria-multiline="true" contentEditable="true" id="edittitle">
+
+        </div>
       </div>
+      <hr></hr>
+      <div class="row noteadd" style="margin-left:5%">
+        <div role="textbox" contenteditable="true" ng-model="note.description" ng-bind-html="note.description" class="description"
+          style="width: 80%; outline: none" aria-multiline="true" contentEditable="true"  id="editdescription ">
+
+        </div>
+        <hr></hr>
+        <div class="row noteadd">
+          <div class="col-md-8 "></div>
+          <input type="submit " ng-click="editNote(note); " class="noteenter ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -62,7 +62,7 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notes
         # fields = "__all__"
-        fields = ('id','title','description', 'date_created','owner')
+        fields = ('id','title','description', 'date_created','owner','isArchived','isPinned','isTrashed')
        
     # def get_items(self, container):
     #     items = Notes.objects.filter()  # Whatever your query may be
