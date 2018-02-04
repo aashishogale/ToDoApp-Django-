@@ -14,5 +14,9 @@ urlpatterns=[
     path('changepassword',views.ChangePassword.as_view(),name='changepassword'),
     path('notes',views.NoteList.as_view(),name='notes'),
     path('createnote',views.CreateNote.as_view(),name='createnote'),
-    path('note/<str:pk>',views.NoteDetail.as_view(),name='note')
+    path('note/<str:pk>',views.NoteDetail.as_view(),name='note'),
+    path('collaborator',views. CreateListCollaborator.as_view(),name='collaborator'),
+    path('collaborator/<str:pk>',views. CreateListCollaborator.as_view(),name='getcollaborator'),
+    path('getuser/<str:pk>',views. GetUserView.as_view(),name='getuser'),
+    path('getuserbyusername/<str:username>',views. GetUserByUserName.as_view(),name='getuserbyusername'),
     ]

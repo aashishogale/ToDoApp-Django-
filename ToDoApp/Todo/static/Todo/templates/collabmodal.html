@@ -1,0 +1,26 @@
+<div class="create-note container">
+
+
+        <div data-ng-init="getallcollaborators(note)">
+
+                <div ng-repeat="user in collaborator">
+                    <p ng-bind-html="user.username"></p>
+                </div>
+
+
+            </div>
+    
+
+  </div>
+  <input type="textbox" contenteditable="true"  class="description"
+  style="width: 80%; outline: none" aria-multiline="true" contentEditable="true" id="editdescription " ng-model="collabuser.username">
+
+<div class="modal-footer row">
+
+        <div class="col-md-8 "></div>
+        <input type="button" ng-click="addCollaborator(note); " value="submit" class="noteenter">
+  
+        </footer>
+      </div>
+</div>
+</div>

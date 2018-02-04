@@ -68,6 +68,12 @@ app.config(['$stateProvider', '$urlRouterProvider',
         templateUrl: '/static/Todo/templates/EditNote.html',
         controller: 'homeController',
       })
+
+      .state('collabmodal', {
+        url: '/collabmodal',
+        templateUrl: '/static/Todo/templates/collabmodal.html',
+        controller: 'homeController',
+      })
       .state('archivenote', {
         url: '/archivenote',
         templateUrl: '/static/Todo/templates/archivednote.html',

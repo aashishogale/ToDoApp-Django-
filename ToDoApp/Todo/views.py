@@ -10,18 +10,20 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from django.contrib.auth import authenticate, login,logout
 from django.views.decorators.csrf import csrf_exempt
 # from django.views.decorators.cache import never_cache
-from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer
+from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer,CollaboratorSerializer
 from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 from rest_framework_jwt.settings import api_settings
 from random import randint
-from .models import Notes
+from .models import Notes,Collaborator
 from django.core.mail import EmailMessage
 from django.core.cache import cache
 from pyee import EventEmitter
 import asyncio
 from functools import wraps
 import redis
+from django.db.models import Q
+from itertools import chain
 # from rest_framework import 
 
 
@@ -224,20 +226,7 @@ class ChangePassword(GenericAPIView):
             )
         
 
-class Returnuser(GenericAPIView):
-     @csrf_exempt
-     def get(self, request, *args, **kwargs):
-            jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-            jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-            payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
-            print(payload)
-            username = jwt_get_username_from_payload(payload)
-            print(username)
-            user=User.objects.get(username=username)
-            return Response(
-                user,
-                    status=status.HTTP_200_OK
-                )
+
 
 @ee.on('sendmail')
 def sendmail(useremail,jwttoken):
@@ -265,13 +254,18 @@ class NoteList(generics.ListAPIView):
         id=self.request.META.get('HTTP_ID')
         print("this is id",id)
         user=User.objects.get(id=id)
+        print(user)
+        collab=Collaborator.objects.filter(shareduser=id)
+        #print(collab)
         queryset=Notes.objects.filter(owner=user).order_by('-last_modified')[:100]
-      
-      
+       # print(queryset)
+        queryset2=Notes.objects.filter(id__in=collab)
+        #print(queryset2)  
+        final_queryset=list(chain(queryset2,queryset))
         # serializer_class = NoteSerializer(Notes, context={"request": request})
         #print(queryset)
-        if queryset:
-          return queryset
+        if final_queryset:
+          return final_queryset
 
     # serializer_class = NoteSerializer #(Notes, context={"request": request})
 
@@ -287,3 +281,31 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
 class CreateProfile(generics.UpdateAPIView):
      print("inside create")
      serializer_class = NoteSerializer
+
+class CreateListCollaborator(generics.ListCreateAPIView):
+     serializer_class = CollaboratorSerializer
+     def get_queryset(self):
+        id=self.request.META.get('HTTP_NOTEID')
+        print("this is id",id)
+        note=Notes.objects.get(id=id)
+        queryset=Collaborator.objects.filter(note=note)
+      
+      
+        # serializer_class = NoteSerializer(Notes, context={"request": request})
+        #print(queryset)
+        if queryset:
+          return queryset
+
+class CollaboratorDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Collaborator.objects.all()
+    serializer_class = CollaboratorSerializer
+
+
+class GetUserView(generics.RetrieveAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+
+class GetUserByUserName(generics.RetrieveAPIView):
+    lookup_field='username'
+    queryset=User.objects.all()
+    serializer_class=UserSerializer

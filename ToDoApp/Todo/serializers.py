@@ -6,9 +6,9 @@ from django.views.defaults import bad_request
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from .models import Notes,Profile
+from .models import Notes,Profile,Collaborator
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id','username', 'password','email')
@@ -67,8 +67,12 @@ class NoteSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Notes
+        model = Profile
         # fields = "__all__"
         fields = ('id','owner','image')
        
- 
+class CollaboratorSerializer(serializers.ModelSerializer):
+       class Meta:
+        model = Collaborator
+        # fields = "__all__"
+        fields = ('id','owner','shareduser','note')

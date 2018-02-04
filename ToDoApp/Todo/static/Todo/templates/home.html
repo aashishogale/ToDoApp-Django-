@@ -30,8 +30,8 @@
 
                 <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
                     <li>
-                            <div class="button" ngf-select="upload($file)">Upload on file select</div>
-                                          
+                        <div class="button" ngf-select="upload($file)">Upload on file select</div>
+
                     </li>
                     <li>
                         <div class="signout" ng-click=logout();>signout</div>
@@ -105,10 +105,11 @@
             <div>{{pinned}}</div>
             <!--pinnednotes-->
             <div class="row " ng-show="grid=true">
-                  
-                <div class="masonry-grid" style="width:100%" >
-                    
-                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}" ng-init="pin=true" class="card" ng-class="class">
+
+                <div class="masonry-grid" style="width:100%">
+
+                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}" ng-init="pin=true"
+                        class="card" ng-class="class">
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="title">{{note.title}}</h4>
                         <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description">{{note.description}}</p>
                         <footer>
@@ -136,17 +137,19 @@
             <!---notes-->
             <div>{{others}}</div>
             <div class="row " ng-show="grid=true">
-         
-                <div class="masonry-grid"  style="width:100%">
 
-                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card" ng-class="class">
+                <div class="masonry-grid" style="width:100%">
+
+                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card"
+                        ng-class="class">
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="title">{{note.title}}</h4>
                         <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description">{{note.description}}</p>
+                    
                         <footer>
                             <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
 
                             <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
-
+                            <img src="{{collaburl}}" ng-click="opencollaborators(note)"></img>
                             <img class=" btn dropdown-toggle" data-toggle="dropdown" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px">
 
                             <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu">

@@ -35,3 +35,14 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return 
+
+class Collaborator(models.Model):
+    owner=models.ForeignKey(User,on_delete=models.CASCADE,related_name='collaboratednoteowner')
+    shareduser=models.ForeignKey(User,on_delete=models.CASCADE)
+    note=models.ForeignKey(Notes,on_delete=models.CASCADE)
+    objects=models.Manager()
+    def __str__(self):
+        return 
+
+    def __unicode__(self):
+        return 
