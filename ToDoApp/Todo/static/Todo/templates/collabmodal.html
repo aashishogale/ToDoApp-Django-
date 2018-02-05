@@ -4,7 +4,7 @@
         <div data-ng-init="getallcollaborators(note)">
 
                 <div ng-repeat="user in collaborator">
-                    <p ng-bind-html="user.username"></p>
+                    <p ng-bind-html="user.username"></p><input type= "button" value="delete" ng-click="deleteCollaborator(note,user)">
                 </div>
 
 

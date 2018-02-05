@@ -141,10 +141,14 @@
                 <div class="masonry-grid" style="width:100%">
 
                     <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card"
-                        ng-class="class">
+                        ng-class="class" >
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="title">{{note.title}}</h4>
                         <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description">{{note.description}}</p>
-                    
+
+               
+
+
+         
                         <footer>
                             <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
 

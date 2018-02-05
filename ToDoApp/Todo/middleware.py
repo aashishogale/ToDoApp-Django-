@@ -19,7 +19,8 @@ class JWTAuthenticationMiddleware:
         print(current_url)
         jwttoken=request.META.get('HTTP_TOKEN')
         print(jwttoken)
-        if current_url=='userlogin' or  current_url=='userregister' or current_url=='startlogin' :
+        if current_url=='userlogin' or  current_url=='userregister' or current_url=='startlogin' or current_url=='verifytoken' :
+            print("allowed")
             return None
         print(jwttoken)
         cache=redis.StrictRedis(host='localhost',decode_responses=True)

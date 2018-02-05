@@ -1,6 +1,6 @@
 var toDo = angular.module('Todo');
 toDo.controller('homeController', function ($scope, restService,
-	$location, $state, $uibModalStack, $uibModal) {
+	$location, $state, $uibModalStack, $uibModal,Upload) {
 
 	//$scope.isGrid=localStorage.getItem("Grid")
 	$scope.class = localStorage.getItem("Grid");
@@ -15,7 +15,7 @@ toDo.controller('homeController', function ($scope, restService,
 			//$scope.isGrid = false;
 			localStorage.setItem("Grid", "grid")
 		} else {
-		
+
 			//$scope.width="100%"
 			$scope.class = 'list'
 			//$('.card').css("width", "100%");
@@ -31,44 +31,51 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.note = '';
 
 	$scope.collaborator = [];
-	$scope.collaborators = [];
+
 	$scope.getallcollaborators = function (note) {
-	
-	
+
+
 		var service2 = restService.service('GET', 'collaborator', null, note.id);
-	
+
 		service2.then(function (response) {
-		
-		$scope.collaborators = response.data
+			$scope.collaborators = [];
+			$scope.collaborator = [];
+			$scope.owner = ''
+			$scope.collaborators = response.data
+
 			for (i in $scope.collaborators) {
 				$scope.user = $scope.collaborators[i];
-			
+
+
 				$scope.getuser($scope.user.shareduser)
-			
+
 
 			}
-		
+
 		})
-		
+
 
 	}
 
 
 
-		$scope.getuser = function (user) {
-	
-	
-			var url = "getuser/" + user;
-			var service2 = restService.service('GET', url);
-			service2.then(function (response) {
-			
-				$scope.collaborator.push(response.data)
-				
+	$scope.getuser = function (user) {
 
 
-			})
+		var url = "getuser/" + user;
+		var service2 = restService.service('GET', url);
+		service2.then(function (response) {
 
-		}
+			$scope.collaborator.push(response.data)
+
+
+
+		})
+
+	}
+
+
+
 	var getallnotes = function () {
 		id = localStorage.getItem("id");
 		var service = restService.service('GET', 'notes');
@@ -88,34 +95,62 @@ toDo.controller('homeController', function ($scope, restService,
 		})
 	};
 
- $scope.collabuser={};
+	$scope.collabuser = {};
 	$scope.addCollaborator = function (note) {
 		var collaborator = {};
-         
+
 		collaborator.owner = note.owner;
 		collaborator.note = note.id;
-		console.log("user"+$scope.collabuser.username)
+		console.log("user" + $scope.collabuser.username)
 		var url = "getuserbyusername/" + $scope.collabuser.username
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
 			console.log("response" + response.data)
-			user={}
-			user=response.data
+			user = {}
+			user = response.data
 			console.log(user)
 			collaborator.shareduser = user.id
 			savecollaborator(collaborator)
 		})
-	
+
+	}
+
+	$scope.deleteCollaborator = function (note,user) {
+		var collaborator = {};
+        console.log(note)
+		collaborator.owner = note.owner;
+		collaborator.note = note.id;
+		console.log("user" + $scope.collabuser.username)
+		var url = "getuserbyusername/" + user.username
+		var service2 = restService.service('GET', url);
+		service2.then(function (response) {
+			console.log("response" + response.data)
+			user = {}
+			user = response.data
+			console.log(user)
+			collaborator.shareduser = user.id
+			removeCollaborator(collaborator)
+
+		})
 	}
 
 
-	var savecollaborator=function(collaborator){
+	var removeCollaborator = function (collaborator) {
+		var url = "deletecollaborator/" + collaborator.owner + "/" + collaborator.note + "/" + collaborator.shareduser
+		var service2 = restService.service('GET', url);
+		service2.then(function(response){
+			$state.reload()
+			console.log("deleted successfully")
+		})
+	}
+	var savecollaborator = function (collaborator) {
 		console.log(collaborator)
 		var service2 = restService.service('POST', "collaborator", collaborator);
 		service2.then(function (response) {
 			console.log("collab added successfully")
 		})
 	}
+
 	getallnotes();
 	$scope.createNote = function (note) {
 		note.owner = localStorage.getItem("id")
@@ -210,6 +245,8 @@ toDo.controller('homeController', function ($scope, restService,
 
 
 
+
+
 		}).result.then(function () {
 		}, function (res) {
 		});
@@ -249,18 +286,39 @@ toDo.controller('homeController', function ($scope, restService,
 	// 
 
 	$scope.upload = function (file) {
-		Upload.upload({
-			url: 'upload/url',
-			data: { file: file }
-		}).then(function (resp) {
-			console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-		}, function (resp) {
-			console.log('Error status: ' + resp.status);
-		}, function (evt) {
-			var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-			console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-		});
-	};
+	// 	// Upload.upload({
+	// 	// 	method:'POST',
+	// 	// 	url: 'addimage',
+	// 	// 	data: { file: file ,
+	// 	// 		headers:{
+	// 	// 		token:localStorage.getItem('token'),
+	// 	// 		id:localStorage.getItem('id'),
+				
+	// 	// 		'Cache-Control' : 'no-cache'
+				
+			
+	// 	// 	}
+	// 	// }
+
+	// 	}).then(function (resp) {
+	// 		console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+	// 	}, function (resp) {
+	// 		console.log('Error status: ' + resp.status);
+	// 	}, function (evt) {
+	// 		var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+			
+	// 	});
+	// };
+     data={
+		 'image':file,
+		 'owner':localStorage.getItem('id')
+	 }
+	var service=restService.service('POST','addimage',data);
+		service.then(function(response){
+        console.log("this is done")
+	})
+	}
+	
 
 
 

@@ -10,12 +10,12 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from django.contrib.auth import authenticate, login,logout
 from django.views.decorators.csrf import csrf_exempt
 # from django.views.decorators.cache import never_cache
-from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer,CollaboratorSerializer
+from Todo.serializers import ProfileSerializer,UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer,CollaboratorSerializer
 from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 from rest_framework_jwt.settings import api_settings
 from random import randint
-from .models import Notes,Collaborator
+from .models import Notes,Collaborator,Profile
 from django.core.mail import EmailMessage
 from django.core.cache import cache
 from pyee import EventEmitter
@@ -56,6 +56,9 @@ class UserRegisterView(CreateAPIView):
         #data["token"] = token.key
 
         #headers = self.get_success_headers(serializer.data)
+        print("inside register")
+
+       
         ee.emit('sendmail',user.email,jwttoken)
         return Response(status=status.HTTP_201_CREATED)
        
@@ -301,11 +304,41 @@ class CollaboratorDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CollaboratorSerializer
 
 
+
+class DeleteCollaborator(GenericAPIView):
+        def get(self, request, *args, **kwargs):
+            owner=kwargs['owner']
+            note=kwargs['note']
+            shareduser=kwargs['shareduser']
+            print(owner,shareduser,note)
+            collab=Collaborator.objects.get(owner=owner,note=note,shareduser=shareduser)
+            collab.delete()
+            return Response(status=status.HTTP_200_OK)
+
 class GetUserView(generics.RetrieveAPIView):
     queryset=User.objects.all()
     serializer_class=UserSerializer
 
 class GetUserByUserName(generics.RetrieveAPIView):
+
     lookup_field='username'
     queryset=User.objects.all()
     serializer_class=UserSerializer
+
+
+class AddImage(GenericAPIView):
+
+        def post(self, request, *args, **kwargs):
+            owner=request.data["owner"]
+            profile=Profile.objects.get(owner=owner)
+            profile.image=request.data["image"]
+            profile.save
+            data={
+                'profile':profile
+            }
+            return Response(data,status=status.HTTP_200_OK)
+
+class getImage(generics.RetrieveAPIView):
+    lookup_field="owner"
+    queryset=Profile.objects.all()
+    serializer_class=ProfileSerializer
