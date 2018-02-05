@@ -17,10 +17,15 @@ urlpatterns=[
     path('note/<str:pk>',views.NoteDetail.as_view(),name='note'),
     path('collaborator',views. CreateListCollaborator.as_view(),name='collaborator'),
     path('addimage',views.AddImage.as_view(),name='addimage'),
-    path('getimage/<str:owner>',views.AddImage.as_view(),name='getimage'),
+    path('getimage/<str:owner>',views.GetImage.as_view(),name='getimage'),
     path('collaborator/<str:pk>',views.CollaboratorDetail.as_view(),name='getcollaborator'),
     path('getuser/<str:pk>',views. GetUserView.as_view(),name='getuser'),
     path('getuserbyusername/<str:username>',views. GetUserByUserName.as_view(),name='getuserbyusername'),
     path('deletecollaborator/<str:owner>/<str:note>/<str:shareduser>',views. DeleteCollaborator.as_view(),name='getuserbyusername'),
 
     ]
+
+
+
+
+

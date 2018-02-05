@@ -25,6 +25,7 @@ import redis
 from django.db.models import Q
 from itertools import chain
 # from rest_framework import 
+from django.conf import settings
 
 
 # Create your views here.
@@ -334,14 +335,26 @@ class AddImage(GenericAPIView):
             print(request.data["file"])
             profile.photo=request.data["file"]
             profile.save()
-         
+            print(settings.MEDIA_ROOT)
             # data={
             #     'owner':profile.owner.id,
             #     'image':profile.image
             # }
             return Response(status=status.HTTP_200_OK)
 
-class getImage(generics.RetrieveAPIView):
-    lookup_field="owner"
-    queryset=Profile.objects.all()
-    serializer_class=ProfileSerializer
+class GetImage(GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+            owner=kwargs['owner']
+            profile=Profile.objects.get(owner=owner)
+            print(profile.photo)
+            print(settings.MEDIA_ROOT)
+            url=settings.MEDIA_ROOT+str(profile.photo)
+            data={
+                'image':url
+            }
+            # data={
+            #     'owner':profile.owner.id,
+            #     'image':profile.image
+            # }
+            return Response(data=data,status=status.HTTP_200_OK)

@@ -166,7 +166,7 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.checked = "col-md-3"
 
-	$scope.imageurl = "/static/Todo/img/polar.jpg";
+	
 
 	$scope.archiveurl = "/static/Todo/img/archive.svg";
 	$scope.trashurl = "/static/Todo/img/trash.svg";
@@ -318,4 +318,17 @@ toDo.controller('homeController', function ($scope, restService,
 
 	};
 
+
+	$scope.getImage =function(){
+		var url="getimage/"+localStorage.getItem("id")
+		var service=restService.service('GET',url)
+		service.then(function(response){
+			console.log(response.data)
+			var image=response.data
+			console.log(image)
+			$scope.imageurl = 'file://'+image.image
+			console.log($scope.imageurl)
+		})
+	}
+   $scope.getImage();
 });

@@ -77,7 +77,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         # fields = "__all__"
-        fields = ('id', 'owner', 'image')
+        fields = ('id', 'owner', 'photo')
 
 
 class CollaboratorSerializer(serializers.ModelSerializer):
