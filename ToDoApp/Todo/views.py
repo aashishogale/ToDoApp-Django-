@@ -331,12 +331,15 @@ class AddImage(GenericAPIView):
         def post(self, request, *args, **kwargs):
             owner=request.data["owner"]
             profile=Profile.objects.get(owner=owner)
-            profile.image=request.data["image"]
-            profile.save
-            data={
-                'profile':profile
-            }
-            return Response(data,status=status.HTTP_200_OK)
+            print(request.data["file"])
+            profile.photo=request.data["file"]
+            profile.save()
+         
+            # data={
+            #     'owner':profile.owner.id,
+            #     'image':profile.image
+            # }
+            return Response(status=status.HTTP_200_OK)
 
 class getImage(generics.RetrieveAPIView):
     lookup_field="owner"

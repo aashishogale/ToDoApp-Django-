@@ -6,6 +6,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.sites.models import Site
 from rest_framework_jwt.settings import api_settings
 from django.urls import reverse
+from django.core.files.storage import FileSystemStorage
+
+fs = FileSystemStorage(location='/media/photos')
 
 class Notes(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -27,7 +30,7 @@ class Notes(models.Model):
 class Profile(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
     
-    photo = models.ImageField(blank=True,upload_to='entity_images')
+    photo = models.ImageField(blank=True,upload_to='userimages/%m-%Y/')
     objects=models.Manager()
 
     def __str__(self):

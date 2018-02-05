@@ -6,21 +6,26 @@ from django.views.defaults import bad_request
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from .models import Notes,Profile,Collaborator
+from .models import Notes, Profile, Collaborator
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id','username', 'password','email')
-        extra_kwargs = {'email': {'required':True},'password': {'required':True}}
+        fields = ('id', 'username', 'password', 'email')
+
+        extra_kwargs = {'email': {'required': True},
+                        'password': {'required': True}}
+
     def create(self, validated_data):
         user = User.objects.create(**validated_data)
         user.set_password(validated_data['password'])
-        user.is_active=False
+        user.is_active = False
         user.save()
-        profile=Profile.objects.create(owner=user)
+        profile = Profile.objects.create(owner=user)
         profile.save()
         return user
+
 
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -36,15 +41,19 @@ class UserLoginSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         print(attrs)
-        self.user = authenticate(username=attrs.get("username"), password=attrs.get('password'))
+        self.user = authenticate(username=attrs.get(
+            "username"), password=attrs.get('password'))
         print(self.error_messages)
-  
+
         if self.user:
             if not self.user.is_active:
-                raise serializers.ValidationError(self.error_messages['inactive_account'])
+                raise serializers.ValidationError(
+                    self.error_messages['inactive_account'])
             return attrs
         else:
-            raise serializers.ValidationError(self.error_messages['invalid_credentials'])
+            raise serializers.ValidationError(
+                self.error_messages['invalid_credentials'])
+
 
 class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
@@ -54,25 +63,25 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ("auth_token",)
 
 
-
 class NoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notes
         # fields = "__all__"
-        fields = ('id','title','description', 'date_created','owner','isArchived','isPinned','isTrashed')
-       
- 
+        fields = ('id', 'title', 'description', 'date_created',
+                  'owner', 'isArchived', 'isPinned', 'isTrashed')
+
 
 class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
         # fields = "__all__"
-        fields = ('id','owner','image')
-       
+        fields = ('id', 'owner', 'image')
+
+
 class CollaboratorSerializer(serializers.ModelSerializer):
-       class Meta:
+    class Meta:
         model = Collaborator
         # fields = "__all__"
-        fields = ('id','owner','shareduser','note')
+        fields = ('id', 'owner', 'shareduser', 'note')

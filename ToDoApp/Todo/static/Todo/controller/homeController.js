@@ -28,7 +28,7 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.Notelist = [];
 	$scope.pinned = '';
 	$scope.others = '';
-	$scope.note = '';
+	
 
 	$scope.collaborator = [];
 
@@ -286,42 +286,36 @@ toDo.controller('homeController', function ($scope, restService,
 	// 
 
 	$scope.upload = function (file) {
-	// 	// Upload.upload({
-	// 	// 	method:'POST',
-	// 	// 	url: 'addimage',
-	// 	// 	data: { file: file ,
-	// 	// 		headers:{
-	// 	// 		token:localStorage.getItem('token'),
-	// 	// 		id:localStorage.getItem('id'),
+		Upload.upload({
+			
+			url: 'addimage',
+			data: { file: file ,owner:localStorage.getItem('id'),
+				headers:{
+				token:localStorage.getItem('token'),
+				id:localStorage.getItem('id'),
 				
-	// 	// 		'Cache-Control' : 'no-cache'
+				'Cache-Control' : 'no-cache'
 				
 			
-	// 	// 	}
-	// 	// }
+			}
+		}
 
-	// 	}).then(function (resp) {
-	// 		console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-	// 	}, function (resp) {
-	// 		console.log('Error status: ' + resp.status);
-	// 	}, function (evt) {
-	// 		var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-			
-	// 	});
-	// };
-     data={
-		 'image':file,
-		 'owner':localStorage.getItem('id')
-	 }
-	var service=restService.service('POST','addimage',data);
-		service.then(function(response){
-        console.log("this is done")
-	})
-	}
+		}).then(function (resp) {
+			console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+		
+    //  data={
+	// 	 'image':file,
+	// 	 'owner':localStorage.getItem('id')
+	//  }
+	// var service=restService.service('POST','addimage',data);
+	// 	service.then(function(response){
+	// 	console.log(response.data)
+    //     console.log("this is done")
+	// })
 	
+	
+		});
 
-
-
-
+	};
 
 });
