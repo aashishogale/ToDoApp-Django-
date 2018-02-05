@@ -1,144 +1,174 @@
 <div class="container">
-
-    <nav class="navbar fixed-top row  justify-content-start" style="background-color:#fb0">
-        
-        <i type="button"class="fa fa-align-justify fa-2x  padding-0" data-toggle="collapse" data-target="#sidebarcollapse" aria-hidden="true"></i>
-        <a class="navbar-brand col-2 padding-0" href="#">Google keep</a>
-
-        <div class="input-group col-5 padding-0">
-            <input class="form-control py-2" type="search" value="search" id="example-search-input">
-            <span class="input-group-btn">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="fa fa-search"></i>
+    <div class="wrapper" id="wrapper">
+        <nav class="navbar fixed-top row  justify-content-start" style="background-color:#fb0">
+            <div class="col-1">
+                <button type="button" class="hamburger is-closed" data-toggle="offcanvas">
+                    <span class="hamb-top"></span>
+                    <span class="hamb-middle"></span>
+                    <span class="hamb-bottom"></span>
                 </button>
-            </span>
-            <div class="col-2"></div>
-            <i class="fa fa-th-large fa-2x padding-0" aria-hidden="true"></i>
-        </div>
+            </div>
+            <a class="navbar-brand col-2 " href="#">Google keep</a>
 
-        <div class="dropdown navbar-right">
-          <!-- <div class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background:transparent;height: 35px; border-radius:50%; background-image:{{imageurl}}"ng-click="getuser();">  -->
-
-                <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" src="{{imageurl}}"  style="height: 50px; border-radius:50%;" ng-click="changeClass();">
-       
-            <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
-                <li>
-                    <div>{{user.name}}</div>
-                </li>
-                
-                <li>
-                    <div class="signout" ng-click=logout();>signout</div>
-                </li>
-            </ul>
-        </div>
-    
-    </nav>
-
-</div>
-<div class="wrapper row " style="max-width: 100%;
-overflow-x: hidden;">
+            <div class="input-group col-5 padding-0">
+                <input class="form-control py-2" type="search" value="search" id="example-search-input">
+                <span class="input-group-btn">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+                <div class="col-2"></div>
+                <i class="fa fa-th-large fa-2x padding-0" ng-click="gridlist();" aria-hidden="true"></i>
+            </div>
 
 
-<div class="collapse show col-md-2" id="sidebarcollapse">
-    <nav id="sidebar" class="navbar  fixed-left col-md-3">
-        <div class="container-fluid">
-            <div class="row">
-                <ul class="list-unstyled components">
+            <div class="dropdown navbar-right">
+                <!-- <div class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background:transparent;height: 35px; border-radius:50%; background-image:{{imageurl}}"ng-click="getuser();">  -->
 
+                <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" ng-src="{{imageurl}}" style="height: 50px; border-radius:50%;"
+                    ng-click="changeClass();">
 
+                <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
                     <li>
-                        <a href="#!/home">Notes</a>
+                        <div class="button" ngf-select="upload($file)">Upload on file select</div>
+
                     </li>
                     <li>
-                        <a href='#!/reminder'>Reminders</a>
-                    </li>
-                    <li>
-                        <a href="#!/trash">Trash</a>
-                    </li>
-                    <li>
-                        <a href="#!/archive">Archive</a>
+                        <div class="signout" ng-click=logout();>signout</div>
                     </li>
                 </ul>
             </div>
-            
-       
+        </nav>
+        <div class="overlay"></div>
 
-        </div>
+        <!-- Sidebar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+            <ul class="nav sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Brand
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Notes</a>
+                </li>
+                <li>
+                    <a ui-sref="archivenote">archive</a>
+                </li>
+                <li>
+                    <a ui-sref="trashnote">Trash</a>
+                </li>
 
-    </nav>
-    </div>
+            </ul>
+        </nav>
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
 
-    <div class="container col-md-9" ng-init="showthis=true"  >
-
-		<!-------------------------- createNote -------------------------------------------------------->
-		<div class="row "  style=" margin-left:10%;" >
-			<div class="bootcreate col-md-10 "  >
-				<div class="show-create" ng-show="showthis"
-					ng-click="show=true; showthis=false">
-					<label>take a note</label>
-				</div>
-			</div>
-			<div class="bootcreatenote col-md-12" >
-				<div class="create-note container" ng-show="show" >
-					<div class="row noteadd" style="margin-left:5%">
-
-						<input ng-model="note.title" type="textbox"
-							style="width: 80%; outline: none;" contentEditable="true"
-							class="addTitle"  data-placeholder="title" >
-					</div>
-					<hr></hr>
-					<div class="row noteadd" style="margin-left:5%">
-
-
-						<div role="textbox" contenteditable="true" ng-model="note.description" class="addTitle"
-							style="width: 80%; outline: none" aria-multiline="true"
-							contentEditable="true" 
-							data-placeholder="take a note" id="description" ></textarea>
-					</div>
-					<hr></hr>
-					<div class="row noteadd">
-                        <div class="col-md-8"></div>
-						<input type="submit"
-							ng-click="createNote(note);show=false;showthis=true"
-							class="noteenter">
-					</div>
-				</div>
-
-			</div>
-
-
-
-            <div class="row collapsed " id="display-notes" >
-                <div id="note" clicknote
-                    ng-repeat=" note in
-                        Notelist"
-                    class="{{checked}}">
-                 
-    
-    
-                    <div class="row noteadd" >
-    
-                        <div ng-bind-html="note.title" ng-click="openCustomModal(note);" style="margin-left:10%"></div>
+        <div class="container notecontainer" ng-init="showthis=true" style="    margin-top: 10%;
+        /* margin-left: 250px; */
+     
+        width: 100%;">
+            <!-------------------------- createNote -------------------------------------------------------->
+            <div class="row" style=" margin: 0% 2% 5% 0%;">
+                <div class="bootcreate col-md-10 ">
+                    <div class="show-create" ng-show="showthis" ng-click="show=true; showthis=false">
+                        <label>take a note</label>
                     </div>
-    
-    
-                    <hr></hr>
-                    <div class="row noteadd">
-    
-                        <div ng-bind-html="note.description"
-                             ng-click="openCustomModal(note);" class="desc flex-container" style="margin-left:10%"></div>
-                    </div>
-    
-    
-    
-    
-    
-    
-    
                 </div>
-    
+                <div class="bootcreatenote col-md-12">
+                    <div class="create-note container" ng-show="show">
+                        <div class="row noteadd" style="margin-left:5%">
+                            <input ng-model="note.title" type="textbox" style="width: 80%; outline: none;" contentEditable="true" class="addTitle" data-placeholder="title">
+                        </div>
+                        <hr></hr>
+                        <div class="row noteadd" style="margin-left:5%">
+                            <div role="textbox" contenteditable="true" ng-model="note.description" class="addTitle" style="width: 80%; outline: none"
+                                aria-multiline="true" contentEditable="true" data-placeholder="take a note" id="description">
+
+                            </div>
+                            <hr></hr>
+
+
+
+                        </div>
+                        <footer>
+
+                            <input type="submit" ng-click="createNote(note);show=false;showthis=true" class="noteenter">
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div>{{pinned}}</div>
+            <!--pinnednotes-->
+            <div class="row " ng-show="grid=true">
+
+                <div class="masonry-grid" style="width:100%">
+
+                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}" ng-init="pin=true"
+                        class="card" ng-class="class">
+                        <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="title">{{note.title}}</h4>
+                        <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description">{{note.description}}</p>
+                        <footer>
+                            <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
+
+                            <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
+
+                            <img class=" btn dropdown-toggle" data-toggle="dropdown" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px">
+
+                            <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu">
+
+                                <li ng-click="trashNote(note);">trash note
+
+                                </li>
+                            </ul>
+
+                        </footer>
+                    </card>
+
+                </div>
+
+            </div>
+            <div></div>
+            <div></div>
+            <!---notes-->
+            <div>{{others}}</div>
+            <div class="row " ng-show="grid=true">
+
+                <div class="masonry-grid" style="width:100%">
+
+                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card"
+                        ng-class="class" >
+                        <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="title">{{note.title}}</h4>
+                        <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description">{{note.description}}</p>
+
+               
+
+
+         
+                        <footer>
+                            <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
+
+                            <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
+                            <img src="{{collaburl}}" ng-click="opencollaborators(note)"></img>
+                            <img class=" btn dropdown-toggle" data-toggle="dropdown" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px">
+
+                            <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu">
+
+                                <li ng-click="trashNote(note);">trash note
+
+                                </li>
+                            </ul>
+
+                        </footer>
+                    </card>
+
+                </div>
+            </div>
+
         </div>
-        
-
-
+    </div>
 </div>

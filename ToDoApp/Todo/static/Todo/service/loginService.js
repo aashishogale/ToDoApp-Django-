@@ -4,8 +4,10 @@ toDo.factory('restService', function($http, $location) {
 
 	var details = {};
 	
-	details.service = function(method, url, data) {
+	details.service = function(method, url, data,noteid) {
 		console.log("this url is hit" +url);
+		console.log(data)
+		console.log(noteid)
 		var httpobj={
 			method : method,
 			url : url,
@@ -13,6 +15,7 @@ toDo.factory('restService', function($http, $location) {
 			headers:{
 				token:localStorage.getItem('token'),
 				id:localStorage.getItem('id'),
+				noteid:noteid,
 				'Cache-Control' : 'no-cache'
 				
 			
@@ -21,10 +24,12 @@ toDo.factory('restService', function($http, $location) {
 		if(method=='get'||method=='GET'){
 			console.log("inside here");
 			httpobj.params=data;
+		
 		}
 		else
 		{
 			httpobj.data=data;
+			
 		}
 		// return $http({
 		// 	method : method,

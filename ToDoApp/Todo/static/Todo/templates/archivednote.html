@@ -1,0 +1,119 @@
+<div class="container">
+        <div class="wrapper" id="wrapper">
+            <nav class="navbar fixed-top row  justify-content-start" style="background-color:#fb0">
+                <div class="col-1">
+                    <button type="button" class="hamburger is-closed" data-toggle="offcanvas">
+                        <span class="hamb-top"></span>
+                        <span class="hamb-middle"></span>
+                        <span class="hamb-bottom"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand col-2 " >Archive</a>
+    
+                <div class="input-group col-5 padding-0">
+                    <input class="form-control py-2" type="search" value="search" id="example-search-input">
+                    <span class="input-group-btn">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                    <div class="col-2"></div>
+                    <i class="fa fa-th-large fa-2x padding-0" ng-click="gridlist();" aria-hidden="true"></i>
+                </div>
+    
+    
+                <div class="dropdown navbar-right">
+                    <!-- <div class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background:transparent;height: 35px; border-radius:50%; background-image:{{imageurl}}"ng-click="getuser();">  -->
+    
+                    <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" src="{{imageurl}}" style="height: 50px; border-radius:50%;"
+                        ng-click="changeClass();">
+    
+                    <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
+                        <li>
+                            <div>{{user.name}}</div>
+                        </li>
+                        <li>
+                            <div class="signout" ng-click=logout();>signout</div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="overlay"></div>
+    
+            <!-- Sidebar -->
+            <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+                <ul class="nav sidebar-nav">
+                    <li class="sidebar-brand">
+                        <a href="#">
+                            Brand
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">Home</a>
+                    </li>
+                    <li>
+                        <a ui-sref="archivenote">Archive</a>
+                    </li>
+                    <li>
+                        <a ui-sref="trashnote">Trash</a>
+                    </li>
+                   
+                   
+                </ul>
+            </nav>
+            <!-- /#sidebar-wrapper -->
+            <!-- Page Content -->
+    
+            <div class="container notecontainer" ng-init="showthis=true" style="    margin-top: 10%;
+            /* margin-left: 250px; */
+         
+            width: 100%;">
+                <!-------------------------- createNote -------------------------------------------------------->
+                <div class="row" style=" margin: 0% 2% 5% 0%;">
+                    <div class="bootcreate col-md-10 ">
+                        <div class="show-create" ng-show="showthis" ng-click="show=true; showthis=false">
+                            <label>take a note</label>
+                        </div>
+                    </div>
+                    <div class="bootcreatenote col-md-12">
+                        <div class="create-note container" ng-show="show">
+                            <div class="row noteadd" style="margin-left:5%">
+                                <input ng-model="note.title" type="textbox" style="width: 80%; outline: none;" contentEditable="true" class="addTitle" data-placeholder="title">
+                            </div>
+                            <hr></hr>
+                            <div class="row noteadd" style="margin-left:5%">
+                                <div role="textbox" contenteditable="true" ng-model="note.description" class="addTitle" style="width: 80%; outline: none"
+                                    aria-multiline="true" contentEditable="true" data-placeholder="take a note" id="description">
+    
+                                </div>
+                                <hr></hr>
+                                <div class="row noteadd">
+                                    <div class="col-md-8"></div>
+                                    <input type="submit" ng-click="createNote(note);show=false;showthis=true" class="noteenter">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row ">
+                    <div class="masonry-grid" style="width:100%">
+                        <articlelist>
+                            <card ng-repeat="note in Notelist |filter:{isArchived:'true'}| filter:{isPinned:'false'}" class="card">
+                                <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);"></h4>
+                                <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description"></p>
+                                <footer>
+                                    <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
+                           
+                                    <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
+                                
+                                </footer>
+                            </card>
+                        </articlelist>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </div>
+    </div>

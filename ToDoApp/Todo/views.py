@@ -10,19 +10,22 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from django.contrib.auth import authenticate, login,logout
 from django.views.decorators.csrf import csrf_exempt
 # from django.views.decorators.cache import never_cache
-from Todo.serializers import UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer
+from Todo.serializers import ProfileSerializer,UserSerializer,UserLoginSerializer,TokenSerializer,NoteSerializer,CollaboratorSerializer
 from django.utils.decorators import method_decorator
 from rest_framework.authtoken.models import Token
 from rest_framework_jwt.settings import api_settings
 from random import randint
-from .models import Notes
+from .models import Notes,Collaborator,Profile
 from django.core.mail import EmailMessage
 from django.core.cache import cache
 from pyee import EventEmitter
 import asyncio
 from functools import wraps
 import redis
+from django.db.models import Q
+from itertools import chain
 # from rest_framework import 
+from django.conf import settings
 
 
 # Create your views here.
@@ -31,26 +34,6 @@ ee = EventEmitter()
 
 
 
-def tokenvalidate(view_func):
-    @wraps(view_func)
-    def wrap(self, request, *args, **kwargs):
-        # maybe do something before the view_func call
-        print("inside decorator")
-        # jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-        # jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-        # payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
-        # print(payload)
-        # username = jwt_get_username_from_payload(payload)
-        # print(username)
-        # response = view_func(request, *args, **kwargs)
-        username=redis.get(jwttoken)
-        users=User.objects.all()
-        user=User.objects.get(username=username)
-        if user in users:
-            return view_func(request, *args, **kwargs)
-
-        
-    return wrap
 class UserRegisterView(CreateAPIView):
 
    
@@ -74,6 +57,9 @@ class UserRegisterView(CreateAPIView):
         #data["token"] = token.key
 
         #headers = self.get_success_headers(serializer.data)
+        print("inside register")
+
+       
         ee.emit('sendmail',user.email,jwttoken)
         return Response(status=status.HTTP_201_CREATED)
        
@@ -221,7 +207,7 @@ class UserLogoutView(GenericAPIView):
 
 class ChangePassword(GenericAPIView):
      @csrf_exempt
-     @tokenvalidate
+    
      def post(self, request, *args, **kwargs):
         print(request.META.get('HTTP_TOKEN'))
         data=request.data
@@ -244,20 +230,7 @@ class ChangePassword(GenericAPIView):
             )
         
 
-class Returnuser(GenericAPIView):
-     @csrf_exempt
-     def get(self, request, *args, **kwargs):
-            jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-            jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
-            payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
-            print(payload)
-            username = jwt_get_username_from_payload(payload)
-            print(username)
-            user=User.objects.get(username=username)
-            return Response(
-                user,
-                    status=status.HTTP_200_OK
-                )
+
 
 @ee.on('sendmail')
 def sendmail(useremail,jwttoken):
@@ -285,13 +258,18 @@ class NoteList(generics.ListAPIView):
         id=self.request.META.get('HTTP_ID')
         print("this is id",id)
         user=User.objects.get(id=id)
-        queryset=Notes.objects.filter(owner=user)[:30]
-      
-      
+        print(user)
+        collab=Collaborator.objects.filter(shareduser=id)
+        #print(collab)
+        queryset=Notes.objects.filter(owner=user).order_by('-last_modified')[:100]
+       # print(queryset)
+        queryset2=Notes.objects.filter(id__in=collab)
+        #print(queryset2)  
+        final_queryset=list(chain(queryset2,queryset))
         # serializer_class = NoteSerializer(Notes, context={"request": request})
         #print(queryset)
-        if queryset:
-          return queryset
+        if final_queryset:
+          return final_queryset
 
     # serializer_class = NoteSerializer #(Notes, context={"request": request})
 
@@ -303,3 +281,80 @@ class CreateNote(generics.CreateAPIView):
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Notes.objects.all()
     serializer_class = NoteSerializer
+
+class CreateProfile(generics.UpdateAPIView):
+     print("inside create")
+     serializer_class = NoteSerializer
+
+class CreateListCollaborator(generics.ListCreateAPIView):
+     serializer_class = CollaboratorSerializer
+     def get_queryset(self):
+        id=self.request.META.get('HTTP_NOTEID')
+        print("this is id",id)
+        note=Notes.objects.get(id=id)
+        queryset=Collaborator.objects.filter(note=note)
+      
+      
+        # serializer_class = NoteSerializer(Notes, context={"request": request})
+        #print(queryset)
+        if queryset:
+          return queryset
+
+class CollaboratorDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Collaborator.objects.all()
+    serializer_class = CollaboratorSerializer
+
+
+
+class DeleteCollaborator(GenericAPIView):
+        def get(self, request, *args, **kwargs):
+            owner=kwargs['owner']
+            note=kwargs['note']
+            shareduser=kwargs['shareduser']
+            print(owner,shareduser,note)
+            collab=Collaborator.objects.get(owner=owner,note=note,shareduser=shareduser)
+            collab.delete()
+            return Response(status=status.HTTP_200_OK)
+
+class GetUserView(generics.RetrieveAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+
+class GetUserByUserName(generics.RetrieveAPIView):
+
+    lookup_field='username'
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+
+
+class AddImage(GenericAPIView):
+
+        def post(self, request, *args, **kwargs):
+            owner=request.data["owner"]
+            profile=Profile.objects.get(owner=owner)
+            print(request.data["file"])
+            profile.photo=request.data["file"]
+            profile.save()
+            print(settings.MEDIA_ROOT)
+            # data={
+            #     'owner':profile.owner.id,
+            #     'image':profile.image
+            # }
+            return Response(status=status.HTTP_200_OK)
+
+class GetImage(GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+            owner=kwargs['owner']
+            profile=Profile.objects.get(owner=owner)
+            print(profile.photo)
+            print(settings.MEDIA_ROOT)
+            url=settings.MEDIA_ROOT+str(profile.photo)
+            data={
+                'image':url
+            }
+            # data={
+            #     'owner':profile.owner.id,
+            #     'image':profile.image
+            # }
+            return Response(data=data,status=status.HTTP_200_OK)

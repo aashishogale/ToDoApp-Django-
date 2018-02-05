@@ -6,12 +6,19 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.sites.models import Site
 from rest_framework_jwt.settings import api_settings
 from django.urls import reverse
+from django.core.files.storage import FileSystemStorage
+
+fs = FileSystemStorage(location='/media/photos')
 
 class Notes(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
     title=models.CharField(max_length=2000)
     description=models.TextField(max_length=2000)
     date_created=models.DateTimeField(auto_now_add=True)
+    isArchived=models.BooleanField(default=False)
+    isPinned=models.BooleanField(default=False)
+    isTrashed=models.BooleanField(default=False)
+    last_modified = models.DateTimeField(auto_now=True)
     objects=models.Manager()
 
     def __str__(self):
@@ -20,14 +27,23 @@ class Notes(models.Model):
     def __unicode__(self):
         return 
 
-
-class Note(models.Model):
+class Profile(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
-    title=models.CharField(max_length=2000)
-    description=models.CharField(max_length=2000)
-    date_created=models.DateTimeField(auto_now_add=True)
+    
+    photo = models.ImageField(blank=True,upload_to='userimages/%m-%Y/')
     objects=models.Manager()
 
+    def __str__(self):
+        return 
+
+    def __unicode__(self):
+        return 
+
+class Collaborator(models.Model):
+    owner=models.ForeignKey(User,on_delete=models.CASCADE,related_name='collaboratednoteowner')
+    shareduser=models.ForeignKey(User,on_delete=models.CASCADE)
+    note=models.ForeignKey(Notes,on_delete=models.CASCADE)
+    objects=models.Manager()
     def __str__(self):
         return 
 

@@ -30,7 +30,9 @@ toDo.controller('loginController', function($scope, restService,
 			// //console.log("this is "+response.data.auth_token)
 			//localStorage.setItem("Token",response.data)
 			localStorage.setItem("token",response.data.token)
+			localStorage.setItem("Grid","grid")
 			localStorage.setItem("id",response.data.id)
+			localStorage.setItem("name",response.data.username)
 	        $location.path('/home');
 
 		}, function(response) {
@@ -48,6 +50,7 @@ toDo.controller('loginController', function($scope, restService,
 			//$auth.setToken(response.data)
 			// //console.log("this is "+response.data.auth_token)
 			localStorage.setItem("token",response.data)
+		
 	        $location.path('/enterotp');
 
 		}, function(response) {
