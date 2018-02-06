@@ -253,21 +253,24 @@ def sendmail(useremail,jwttoken):
 class NoteList(generics.ListAPIView):
  
     serializer_class = NoteSerializer
-    queryset=Notes.objects.all()
+     
     def get_queryset(self):
         id=self.request.META.get('HTTP_ID')
         print("this is id",id)
         user=User.objects.get(id=id)
         print(user)
+       
         collab=Collaborator.objects.filter(shareduser=id)
-        #print(collab)
+
         queryset=Notes.objects.filter(owner=user).order_by('-last_modified')[:100]
-       # print(queryset)
-        queryset2=Notes.objects.filter(id__in=collab)
+        #print(queryset)
+        queryset2=Notes.objects.raw('select * from "Todo_notes" where id=(select note_id from "Todo_collaborator" where shareduser_id= %s) ',[id])
+       
         #print(queryset2)  
         final_queryset=list(chain(queryset2,queryset))
         # serializer_class = NoteSerializer(Notes, context={"request": request})
-        #print(queryset)
+       # print(final_queryset)
+      
         if final_queryset:
           return final_queryset
 
@@ -292,11 +295,12 @@ class CreateListCollaborator(generics.ListCreateAPIView):
         id=self.request.META.get('HTTP_NOTEID')
         print("this is id",id)
         note=Notes.objects.get(id=id)
-        queryset=Collaborator.objects.filter(note=note)
+        queryset=Collaborator.objects.filter(note=id)
       
       
         # serializer_class = NoteSerializer(Notes, context={"request": request})
         #print(queryset)
+       
         if queryset:
           return queryset
 
@@ -347,14 +351,12 @@ class GetImage(GenericAPIView):
     def get(self, request, *args, **kwargs):
             owner=kwargs['owner']
             profile=Profile.objects.get(owner=owner)
-            print(profile.photo)
-            print(settings.MEDIA_ROOT)
-            url=settings.MEDIA_ROOT+str(profile.photo)
+            # print(profile.photo)
+            # print(settings.MEDIA_ROOT)
+            # url=settings.MEDIA_ROOT+str(profile.photo)
+          
             data={
-                'image':url
-            }
-            # data={
-            #     'owner':profile.owner.id,
-            #     'image':profile.image
-            # }
+            
+                 'image':str(profile.photo)
+             }
             return Response(data=data,status=status.HTTP_200_OK)

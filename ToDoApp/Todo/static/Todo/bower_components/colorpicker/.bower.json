@@ -1,0 +1,14 @@
+{
+  "name": "colorpicker",
+  "homepage": "https://github.com/bladepop/colorpicker",
+  "_release": "04bb4e8a5c",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "04bb4e8a5c9dced8ef4581a24d8c21c6b31f1eae"
+  },
+  "_source": "https://github.com/bladepop/colorpicker.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/bladepop/colorpicker.git",
+  "_direct": true
+}

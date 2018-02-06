@@ -1,4 +1,4 @@
-var app = angular.module('Todo', ['ui.router', 'satellizer', 'ngSanitize','ngAnimate','ui.bootstrap','ngFileUpload'])
+var app = angular.module('Todo', ['ui.router', 'satellizer', 'ngSanitize','ngAnimate','ui.bootstrap','ngFileUpload','ui.bootstrap.datetimepicker','toastr','tb-color-picker'])
 console.log("entered module")
 app.config(['$stateProvider', '$urlRouterProvider',
   function ($stateProvider, $urlRouterProvider, stateService) {

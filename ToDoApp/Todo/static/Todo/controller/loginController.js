@@ -31,6 +31,8 @@ toDo.controller('loginController', function($scope, restService,
 			//localStorage.setItem("Token",response.data)
 			localStorage.setItem("token",response.data.token)
 			localStorage.setItem("Grid","grid")
+			localStorage.setItem("archiveGrid","grid")
+			localStorage.setItem("trashGrid","grid")
 			localStorage.setItem("id",response.data.id)
 			localStorage.setItem("name",response.data.username)
 	        $location.path('/home');

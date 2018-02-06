@@ -7,6 +7,8 @@ from django.contrib.sites.models import Site
 from rest_framework_jwt.settings import api_settings
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
+from django.utils import timezone
+import datetime
 
 fs = FileSystemStorage(location='/media/photos')
 
@@ -19,8 +21,10 @@ class Notes(models.Model):
     isPinned=models.BooleanField(default=False)
     isTrashed=models.BooleanField(default=False)
     last_modified = models.DateTimeField(auto_now=True)
+    reminder = models.DateTimeField(default=timezone.now)
     objects=models.Manager()
-
+    color=models.CharField(max_length=2000,default="#ffffff")
+  
     def __str__(self):
         return 
 

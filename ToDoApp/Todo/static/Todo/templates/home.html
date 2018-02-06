@@ -25,8 +25,10 @@
             <div class="dropdown navbar-right">
                 <!-- <div class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background:transparent;height: 35px; border-radius:50%; background-image:{{imageurl}}"ng-click="getuser();">  -->
 
+                -
                 <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" ng-src="{{imageurl}}" style="height: 50px; border-radius:50%;"
                     ng-click="changeClass();">
+
 
                 <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
                     <li>
@@ -78,12 +80,12 @@
                 <div class="bootcreatenote col-md-12">
                     <div class="create-note container" ng-show="show">
                         <div class="row noteadd" style="margin-left:5%">
-                            <input ng-model="note.title" type="textbox" style="width: 80%; outline: none;" contentEditable="true" class="addTitle" data-placeholder="title">
+                            <input ng-model="note1.title" type="textbox" style="width: 80%; outline: none;" contentEditable="true" id="addTitle" class="addTitle">
                         </div>
                         <hr></hr>
                         <div class="row noteadd" style="margin-left:5%">
-                            <div role="textbox" contenteditable="true" ng-model="note.description" class="addTitle" style="width: 80%; outline: none"
-                                aria-multiline="true" contentEditable="true" data-placeholder="take a note" id="description">
+                            <div role="textbox" contenteditable="true" class="addTitle" style="width: 80%; outline: none" aria-multiline="true" contentEditable="true"
+                                data-placeholder="take a note" id="description">
 
                             </div>
                             <hr></hr>
@@ -91,9 +93,40 @@
 
 
                         </div>
-                        <footer>
+                        <footer class="row">
 
-                            <input type="submit" ng-click="createNote(note);show=false;showthis=true" class="noteenter">
+                                <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
+
+                                <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
+                                <img src="{{collaburl}}" ng-click="opencollaborators(note)"></img>
+                                <div>
+                                    <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
+    
+                                    <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
+    
+                                        <li ng-click="trashNote(note);">trash note
+    
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <img class=" btn dropdown-toggle" id="reminder" data-toggle="dropdown" src="{{reminderurl}}" style="height:30px"> </img>
+    
+                                    <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
+                                        <li>
+                                            <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions"
+                                                date-disabled="isDisabledDate(date, mode)">
+                                            </datetimepicker>
+                                        </li>
+                                        <li ng-click="addReminder(note);">reminder
+    
+                                        </li>
+                                    </ul>
+                                </div>
+    
+                                <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"></color-picker>
+
+                            <input type="submit" ng-click="createNote(addnote);show=false;showthis=true" class="noteenter">
                         </footer>
                     </div>
                 </div>
@@ -141,28 +174,48 @@
                 <div class="masonry-grid" style="width:100%">
 
                     <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card"
-                        ng-class="class" >
-                        <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="title">{{note.title}}</h4>
-                        <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description">{{note.description}}</p>
+                        style="background-color:{{note.color}};" ng-class="class" ng-init="getallcollaborators(note)">
+                        <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
+                        <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="showdescription"></p>
 
-               
+                        <div ng-repeat="user in collaborator | filter:(user.id!=note.owner)" >
+                                <p ng-bind-html="user.username"></p>
+                            </div>
 
+                        
 
-         
-                        <footer>
+                        <footer class="row">
+
                             <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
 
                             <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
                             <img src="{{collaburl}}" ng-click="opencollaborators(note)"></img>
-                            <img class=" btn dropdown-toggle" data-toggle="dropdown" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px">
+                            <div>
+                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
 
-                            <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu">
+                                <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
 
-                                <li ng-click="trashNote(note);">trash note
+                                    <li ng-click="trashNote(note);">trash note
 
-                                </li>
-                            </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <img class=" btn dropdown-toggle" id="reminder" data-toggle="dropdown" src="{{reminderurl}}" style="height:30px"> </img>
 
+                                <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
+                                    <li>
+                                        <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions"
+                                            date-disabled="isDisabledDate(date, mode)">
+                                        </datetimepicker>
+                                    </li>
+                                    <li ng-click="addReminder(note);">reminder
+
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"></color-picker>
                         </footer>
                     </card>
 

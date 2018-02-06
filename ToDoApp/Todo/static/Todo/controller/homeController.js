@@ -1,6 +1,6 @@
 var toDo = angular.module('Todo');
 toDo.controller('homeController', function ($scope, restService,
-	$location, $state, $uibModalStack, $uibModal,Upload) {
+	$location, $state, $uibModalStack, $uibModal,Upload,$interval,$filter,toastr) {
 
 	//$scope.isGrid=localStorage.getItem("Grid")
 	$scope.class = localStorage.getItem("Grid");
@@ -11,6 +11,7 @@ toDo.controller('homeController', function ($scope, restService,
 		if ($scope.class == 'list') {
 			//$scope.width="32%"
 			$scope.class = 'grid'
+		
 			//$('.card').css("width", "32%");
 			//$scope.isGrid = false;
 			localStorage.setItem("Grid", "grid")
@@ -18,6 +19,9 @@ toDo.controller('homeController', function ($scope, restService,
 
 			//$scope.width="100%"
 			$scope.class = 'list'
+			
+
+			
 			//$('.card').css("width", "100%");
 			//$scope.isGrid = true;
 			localStorage.setItem("Grid", "list")
@@ -25,32 +29,73 @@ toDo.controller('homeController', function ($scope, restService,
 	}
 
 
+	$scope.class1 = localStorage.getItem("archiveGrid");
+	$scope.archivegridlist = function () {
+
+
+
+		if ($scope.class1 == 'list') {
+			//$scope.width="32%"
+			$scope.class1 = 'grid'
+		
+			//$('.card').css("width", "32%");
+			//$scope.isGrid = false;
+			localStorage.setItem("archiveGrid", "grid")
+		} else {
+
+			//$scope.width="100%"
+			$scope.class1 = 'list'
+			
+
+			
+			//$('.card').css("width", "100%");
+			//$scope.isGrid = true;
+			localStorage.setItem("archiveGrid", "list")
+		}
+	}
+	$scope.options = ['#FFFFFF','#FF8A80', '#FFD180', '#FFFF8D', '#CFD8DC', '#80D8FF', '#A7FFEB', '#CCFF90'];
 	$scope.Notelist = [];
 	$scope.pinned = '';
 	$scope.others = '';
-	
+	$scope.color = '';
+
+    $scope.colorChanged = function(newColor, oldColor,note) {
+		console.log('from ', oldColor, ' to ', newColor);
+		note.color=newColor
+
+		var url = "note/" + note.id
+		var service = restService.service('PUT', url,note);
+		service.then(function (response) {
+			$state.reload();
+		})
+		
+    }
 
 	$scope.collaborator = [];
 
 	$scope.getallcollaborators = function (note) {
 
-
+	
 		var service2 = restService.service('GET', 'collaborator', null, note.id);
-
+         
 		service2.then(function (response) {
 			$scope.collaborators = [];
 			$scope.collaborator = [];
-			$scope.owner = ''
+		
 			$scope.collaborators = response.data
-
+		
+			$scope.user={};
 			for (i in $scope.collaborators) {
 				$scope.user = $scope.collaborators[i];
 
-
+				$scope.owner = $scope.user.owner
+				console.log("owner"+$scope.owner)
+				
 				$scope.getuser($scope.user.shareduser)
 
 
 			}
+			$scope.getuser($scope.owner)
 
 		})
 
@@ -75,7 +120,23 @@ toDo.controller('homeController', function ($scope, restService,
 	}
 
 
+$scope.ownername={};
 
+	$scope.getowner = function (note) {
+		
+
+		var url = "getuser/" + note.owner;
+		var service2 = restService.service('GET', url);
+		service2.then(function (response) {
+
+			$scope.ownername=response.data
+
+			console.log("here"+$scope.ownername)
+		})
+
+	}
+
+	$scope.note={};
 	var getallnotes = function () {
 		id = localStorage.getItem("id");
 		var service = restService.service('GET', 'notes');
@@ -90,6 +151,8 @@ toDo.controller('homeController', function ($scope, restService,
 					$scope.others = 'Others';
 				}
 
+				$scope.getallcollaborators ($scope.Notelist[i])
+
 
 			}
 		})
@@ -100,7 +163,9 @@ toDo.controller('homeController', function ($scope, restService,
 		var collaborator = {};
 
 		collaborator.owner = note.owner;
+		console.log("note owner"+collaborator.owner)
 		collaborator.note = note.id;
+		console.log(collaborator.note)
 		console.log("user" + $scope.collabuser.username)
 		var url = "getuserbyusername/" + $scope.collabuser.username
 		var service2 = restService.service('GET', url);
@@ -110,6 +175,7 @@ toDo.controller('homeController', function ($scope, restService,
 			user = response.data
 			console.log(user)
 			collaborator.shareduser = user.id
+			console.log(collaborator.shareduser)
 			savecollaborator(collaborator)
 		})
 
@@ -152,14 +218,15 @@ toDo.controller('homeController', function ($scope, restService,
 	}
 
 	getallnotes();
-	$scope.createNote = function (note) {
-		note.owner = localStorage.getItem("id")
-
-		note.description = $("#description").html();
-		console.log(note)
-		var service = restService.service('POST', 'createnote', note);
+	$scope.addnote={}
+	$scope.createNote = function (addnote) {
+		$scope.note1.owner = localStorage.getItem("id")
+		
+		$scope.note1.description = $("#description").html();
+		console.log($scope.note)
+		var service = restService.service('POST', 'createnote', $scope.note1);
 		service.then(function (response) {
-
+			note={};
 			$state.reload();
 		})
 	};
@@ -173,6 +240,7 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.moreurl = "/static/Todo/img/threedots.svg";
 	$scope.pinurl = "/static/Todo/img/pin.svg";
 	$scope.collaburl = "/static/Todo/img/colloborator.svg";
+	$scope.reminderurl = "/static/Todo/img/reminder.svg";
 	$scope.dropdown = false;
 	$scope.changeClass = function () {
 		$scope.showdropdown = !$scope.showdropdown;
@@ -182,7 +250,10 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.changeClass1 = function () {
 		$scope.showdropdown2 = !$scope.showdropdown2;
 	}
-
+	$scope.changeClass2 = function () {
+		console.log("inside here")
+		$scope.showdropdown3 = !$scope.showdropdown3;
+	}
 	$scope.logout = function () {
 		var service = restService.service('GET', 'userlogout');
 		service.then(function (response) {
@@ -191,12 +262,56 @@ toDo.controller('homeController', function ($scope, restService,
 		})
 
 	};
+	interVal();
+					function interVal() {
+
+						$interval(
+								function() {
+									var i = 0;
+									for (i; i < $scope.Notelist.length; i++) {
+										console.log("enter");
+										console.log("reminder"
+												+ $scope.Notelist[i].reminder)
+										if ($scope.Notelist[i].reminder != null) {
+											console
+													.log("reminder"
+															+ $scope.Notelist[i].reminder)
+											var reminderdate = $filter('date')
+													(
+															$scope.Notelist[i].reminder,
+															'yyyy-MM-dd HH:mm Z');
+											var currentDate = $filter('date')(
+													new Date(),
+													'yyyy-MM-dd HH:mm Z');
+											console.log("current date"
+													+ currentDate);
+											console.log("reminderdate"
+													+ reminderdate);
+											if (reminderdate === currentDate) {
+												console.log("toaster exeute");
+												toastr.success($scope.Notelist[i].title,'Reminder');
+												return
+
+											}
+										}
+									}
+
+								}, 55000);
+					}
+					;
+
+	$scope.addReminder=function(note){
+		console.log(note)
+		$scope.editNote(note)
+	}
+$scope.note={}
 	$scope.editNote = function (note) {
-		note.title = $(".title").html();
-		note.description = $(".description").html();
-		var url = "note/" + note.id
-		console.log(url)
-		var service = restService.service('PUT', url, note);
+		console.log(note)
+		$scope.note.title=$(".title").html()
+		$scope.note.description = $(".description").html();
+		var url = "note/" + $scope.note.id
+		console.log(note)
+		var service = restService.service('PUT', url,note);
 		service.then(function (response) {
 			$state.reload();
 		})
@@ -204,7 +319,13 @@ toDo.controller('homeController', function ($scope, restService,
 	}
 	$scope.archiveNote = function (note) {
 		note.isArchived = !note.isArchived
-		$scope.editNote(note)
+		console.log(note)
+	
+		var url = "note/" + note.id
+		var service = restService.service('PUT', url,note);
+		service.then(function (response) {
+			$state.reload();
+		})
 	}
 	$scope.pinNote = function (note) {
 		note.isPinned = !note.isPinned
@@ -326,7 +447,7 @@ toDo.controller('homeController', function ($scope, restService,
 			console.log(response.data)
 			var image=response.data
 			console.log(image)
-			$scope.imageurl = 'file://'+image.image
+			$scope.imageurl = 'http://127.0.0.1:8000/media/'+image.image
 			console.log($scope.imageurl)
 		})
 	}

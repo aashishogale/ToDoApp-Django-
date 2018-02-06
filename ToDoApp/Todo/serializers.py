@@ -69,7 +69,7 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Notes
         # fields = "__all__"
         fields = ('id', 'title', 'description', 'date_created',
-                  'owner', 'isArchived', 'isPinned', 'isTrashed')
+                  'owner', 'isArchived', 'isPinned', 'isTrashed','reminder','color')
 
 
 class ProfileSerializer(serializers.ModelSerializer):

@@ -3,7 +3,7 @@ toDo.controller('registrationController', function($scope, restService,
 		$location) {
 	$scope.registerUser = function() {
 		console.log($scope.user);
-		var a = restService.service($scope.user);
+		var a = restService.service('POST','userregister',$scope.user);
 		a.then(function(response) {
 
 			console.log(response.data);

@@ -18,7 +18,7 @@
                         </button>
                     </span>
                     <div class="col-2"></div>
-                    <i class="fa fa-th-large fa-2x padding-0" ng-click="gridlist();" aria-hidden="true"></i>
+                    <i class="fa fa-th-large fa-2x padding-0" ng-click="archivegridlist();" aria-hidden="true"></i>
                 </div>
     
     
@@ -98,9 +98,9 @@
     
                 <div class="row ">
                     <div class="masonry-grid" style="width:100%">
-                        <articlelist>
-                            <card ng-repeat="note in Notelist |filter:{isArchived:'true'}| filter:{isPinned:'false'}" class="card">
-                                <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);"></h4>
+                      
+                            <card ng-repeat="note in Notelist |filter:{isArchived:'true'}| filter:{isPinned:'false'}" class="card" ng-class="class1">
+                                <h4 ng-bind-html="note.title"  ng-click="openCustomModal(note);"></h4>
                                 <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="description"></p>
                                 <footer>
                                     <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
@@ -109,7 +109,7 @@
                                 
                                 </footer>
                             </card>
-                        </articlelist>
+                       
                     </div>
                 </div>
     
