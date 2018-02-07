@@ -22,7 +22,11 @@ urlpatterns=[
     path('getuser/<str:pk>',views. GetUserView.as_view(),name='getuser'),
     path('getuserbyusername/<str:username>',views. GetUserByUserName.as_view(),name='getuserbyusername'),
     path('deletecollaborator/<str:owner>/<str:note>/<str:shareduser>',views. DeleteCollaborator.as_view(),name='getuserbyusername'),
-
+    path('addlabel',views. LabelCreate.as_view(),name='addlabel'),
+    path('getlabel',views. GetAllLabels.as_view(),name='getlabel'),
+    path('addlabeltonote/<str:note>/<str:label>',views. AddNoteToLabel.as_view(),name='addlabeltonote'),
+    path('getlabelbynote',views. GetAllLabelsFromNote.as_view(),name='getlabelbynote'),
+    path('getcollabbynote/<str:note>',views. GetCollabFromNote.as_view(),name='getcollabbynote'),
     ]
 
 

@@ -6,7 +6,7 @@ from django.views.defaults import bad_request
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from .models import Notes, Profile, Collaborator
+from .models import Notes, Profile, Collaborator,Labels
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Notes
         # fields = "__all__"
         fields = ('id', 'title', 'description', 'date_created',
-                  'owner', 'isArchived', 'isPinned', 'isTrashed','reminder','color')
+                  'owner', 'isArchived', 'isPinned', 'isTrashed','reminder','color','collab','ownername')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -85,3 +85,9 @@ class CollaboratorSerializer(serializers.ModelSerializer):
         model = Collaborator
         # fields = "__all__"
         fields = ('id', 'owner', 'shareduser', 'note')
+
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Labels
+        # fields = "__all__"
+        fields = ('id', 'owner', 'label', 'note')

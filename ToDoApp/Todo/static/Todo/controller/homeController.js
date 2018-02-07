@@ -71,17 +71,18 @@ toDo.controller('homeController', function ($scope, restService,
 		
     }
 
-	$scope.collaborator = [];
+
 
 	$scope.getallcollaborators = function (note) {
-
 	
 		var service2 = restService.service('GET', 'collaborator', null, note.id);
-         
+		$scope.collaborators = [];
+		$scope.collaborator = [];
 		service2.then(function (response) {
-			$scope.collaborators = [];
-			$scope.collaborator = [];
 		
+			
+			
+			
 			$scope.collaborators = response.data
 		
 			$scope.user={};
@@ -101,7 +102,8 @@ toDo.controller('homeController', function ($scope, restService,
 
 
 	}
-
+	
+  
 
 
 	$scope.getuser = function (user) {
@@ -110,28 +112,39 @@ toDo.controller('homeController', function ($scope, restService,
 		var url = "getuser/" + user;
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
-
+            
 			$scope.collaborator.push(response.data)
-
-
+			console.log("collabortorlist"+$scope.collaborator)
+			
+		  
+		
 
 		})
 
 	}
+	$scope.getcollabbynote =function(note){
+
+		var id=note.id
+		var url='getcollabbynote/'+id
+		var service=restService.service('GET',url)
+		service.then(function(response){
+		note.collab=response.data;
+			console.log(note)
+		})
+	}
 
 
-$scope.ownername={};
 
-	$scope.getowner = function (note) {
+	$scope.getownername = function () {
 		
-
-		var url = "getuser/" + note.owner;
+		$scope.ownername={}
+		var url = "getuser/" + localStorage.getItem("id");
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
 
 			$scope.ownername=response.data
-
-			console.log("here"+$scope.ownername)
+           $scope.note1.ownername=$scope.ownername.username
+			console.log("here"+$scope.ownername.username)
 		})
 
 	}
@@ -150,8 +163,8 @@ $scope.ownername={};
 					$scope.pinned = 'Pinned';
 					$scope.others = 'Others';
 				}
-
-				$scope.getallcollaborators ($scope.Notelist[i])
+               $scope.getcollabbynote($scope.note)
+			
 
 
 			}
@@ -163,20 +176,20 @@ $scope.ownername={};
 		var collaborator = {};
 
 		collaborator.owner = note.owner;
-		console.log("note owner"+collaborator.owner)
+		
 		collaborator.note = note.id;
-		console.log(collaborator.note)
-		console.log("user" + $scope.collabuser.username)
+		
 		var url = "getuserbyusername/" + $scope.collabuser.username
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
-			console.log("response" + response.data)
+		
 			user = {}
 			user = response.data
-			console.log(user)
+	
 			collaborator.shareduser = user.id
-			console.log(collaborator.shareduser)
+			
 			savecollaborator(collaborator)
+			$state.reload();
 		})
 
 	}
@@ -219,7 +232,9 @@ $scope.ownername={};
 
 	getallnotes();
 	$scope.addnote={}
+
 	$scope.createNote = function (addnote) {
+	    $scope.note1.ownername=localStorage.getItem("name")
 		$scope.note1.owner = localStorage.getItem("id")
 		
 		$scope.note1.description = $("#description").html();
@@ -307,6 +322,7 @@ $scope.ownername={};
 $scope.note={}
 	$scope.editNote = function (note) {
 		console.log(note)
+		$scope.note.collab={}
 		$scope.note.title=$(".title").html()
 		$scope.note.description = $(".description").html();
 		var url = "note/" + $scope.note.id

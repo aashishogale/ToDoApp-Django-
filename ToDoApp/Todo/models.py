@@ -24,7 +24,8 @@ class Notes(models.Model):
     reminder = models.DateTimeField(default=timezone.now)
     objects=models.Manager()
     color=models.CharField(max_length=2000,default="#ffffff")
-  
+    collab=models.ManyToManyField(User,related_name='notecollaborator',blank=True)
+    ownername=models.CharField(max_length=2000,blank=True)
     def __str__(self):
         return 
 
@@ -47,6 +48,18 @@ class Collaborator(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE,related_name='collaboratednoteowner')
     shareduser=models.ForeignKey(User,on_delete=models.CASCADE)
     note=models.ForeignKey(Notes,on_delete=models.CASCADE)
+    objects=models.Manager()
+    def __str__(self):
+        return 
+
+    def __unicode__(self):
+        return 
+
+
+class Labels(models.Model):
+    owner=models.ForeignKey(User,on_delete=models.CASCADE,related_name='labelowner')
+    label=models.CharField(max_length=200)
+    note=models.ManyToManyField(Notes)
     objects=models.Manager()
     def __str__(self):
         return 

@@ -1,26 +1,26 @@
 <div class="create-note container">
 
 
-        <div data-ng-init="getallcollaborators(note);getowner(note);">
-             <p><span ng-bind-html="ownername.username"></span>(owner)</p>
-                <div ng-repeat="user in collaborator |filter:(user.id!=note.owner)" >
-                    <p ng-bind-html="user.username"></p><input type= "button" value="delete" ng-click="deleteCollaborator(note,user)">
-                </div>
+   
+    <p ng-bind-html="note.ownername"></p>(owner)
+        <div ng-repeat="user in note.collab ">
+            <p ng-bind-html="user.username"></p>
+            <input type="button" value="delete" ng-click="deleteCollaborator(note,user)">
+        </div>
 
 
-            </div>
-    
+    </div>
 
-  </div>
-  <input type="textbox" contenteditable="true"  class="description"
-  style="width: 80%; outline: none" aria-multiline="true" contentEditable="true" id="editdescription " ng-model="collabuser.username">
 
-<div class="modal-footer row">
+
+    <input type="textbox" contenteditable="true" class="description" style="width: 80%; outline: none" aria-multiline="true"
+        contentEditable="true" id="editdescription " ng-model="collabuser.username">
+
+    <div class="modal-footer row">
 
         <div class="col-md-8 "></div>
         <input type="button" ng-click="addCollaborator(note); " value="submit" class="noteenter">
-  
+
         </footer>
-      </div>
-</div>
+    </div>
 </div>
