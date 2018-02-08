@@ -10,7 +10,20 @@ from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 import datetime
 
+
 fs = FileSystemStorage(location='/media/photos')
+
+
+class Labels(models.Model):
+    owner=models.ForeignKey(User,on_delete=models.CASCADE,related_name='labelowner')
+    label=models.CharField(max_length=200)
+    
+    objects=models.Manager()
+    def __str__(self):
+        return 
+
+    def __unicode__(self):
+        return 
 
 class Notes(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -25,6 +38,7 @@ class Notes(models.Model):
     objects=models.Manager()
     color=models.CharField(max_length=2000,default="#ffffff")
     collab=models.ManyToManyField(User,related_name='notecollaborator',blank=True)
+    label=models.ManyToManyField(Labels,related_name="notelabel",blank=True)
     ownername=models.CharField(max_length=2000,blank=True)
     def __str__(self):
         return 
@@ -56,13 +70,3 @@ class Collaborator(models.Model):
         return 
 
 
-class Labels(models.Model):
-    owner=models.ForeignKey(User,on_delete=models.CASCADE,related_name='labelowner')
-    label=models.CharField(max_length=200)
-    note=models.ManyToManyField(Notes)
-    objects=models.Manager()
-    def __str__(self):
-        return 
-
-    def __unicode__(self):
-        return 

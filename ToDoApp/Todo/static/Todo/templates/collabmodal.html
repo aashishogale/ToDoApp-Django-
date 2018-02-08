@@ -2,14 +2,16 @@
 
 
    
-    <p ng-bind-html="note.ownername"></p>(owner)
-        <div ng-repeat="user in note.collab ">
-            <p ng-bind-html="user.username"></p>
-            <input type="button" value="delete" ng-click="deleteCollaborator(note,user)">
+    <p ng-bind-html="note.ownername"><span>Owner</span></p>
+    <div ng-repeat="user in note.collab">
+            <div ng-if="user.username!=nameofuser">
+                <p ng-bind-html="user.username"></p>   
+                <input type="button" value="delete" ng-click="deleteCollaborator(note,user)">
+            </div>
         </div>
 
 
-    </div>
+
 
 
 

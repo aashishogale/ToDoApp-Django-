@@ -1,6 +1,6 @@
 var toDo = angular.module('Todo');
 toDo.controller('registrationController', function($scope, restService,
-		$location) {
+		$location,toastr) {
 	$scope.registerUser = function() {
 		console.log($scope.user);
 		var a = restService.service('POST','userregister',$scope.user);
@@ -12,6 +12,7 @@ toDo.controller('registrationController', function($scope, restService,
 
 		}, function(response) {
 			$scope.error = response.data;
+			toastr.error($scope.error.username)
 		});
 	}
 })

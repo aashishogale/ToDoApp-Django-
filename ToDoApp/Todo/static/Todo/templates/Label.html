@@ -1,0 +1,26 @@
+<div class="create-note container">
+
+
+   
+       
+            <div ng-repeat="label in labels ">
+                <p ng-bind-html="label.label"></p>
+                <input type="button" value="delete" ng-click="deletelabel(label)">
+            </div>
+    
+    
+        </div>
+    
+    
+    
+        <input type="textbox" contenteditable="true" class="description" style="width: 80%; outline: none" aria-multiline="true"
+            contentEditable="true" id="editdescription" ng-model="label.label">
+    
+        <div class="modal-footer row">
+    
+            <div class="col-md-8 "></div>
+            <input type="button" ng-click="addLabel(label); " value="submit" class="noteenter">
+    
+            </footer>
+        </div>
+    </div>

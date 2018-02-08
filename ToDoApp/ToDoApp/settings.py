@@ -42,27 +42,27 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     # 'rest_framework.authtoken',
     'Todo',
-    
-    
+
+
 ]
 
 SITE_ID = 1
 
 
 MIDDLEWARE = [
-    #'django.middleware.cache.UpdateCacheMiddleware',  
+    #'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    
- 
+
+
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-  
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-      'django.middleware.cache.FetchFromCacheMiddleware', 
-     'Todo.middleware.JWTAuthenticationMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    'Todo.middleware.JWTAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'ToDoApp.urls'
@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'ToDoApp.wsgi.application'
 
 DATABASES = {
     'default': {
-       
+
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'mynewdatabase',
         'USER': 'aashish',
@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
-JWT_AUTH={
+JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -147,12 +147,12 @@ EMAIL_HOST = 'smtp.gmail.com'
 
 EMAIL_HOST_USER = 'ashtest1947@gmail.com'
 
-#Must generate specific password for your app in [gmail settings][1]
-EMAIL_HOST_PASSWORD ='alohomora'
+# Must generate specific password for your app in [gmail settings][1]
+EMAIL_HOST_PASSWORD = 'alohomora'
 
 EMAIL_PORT = 587
 
-#This did the trick
+# This did the trick
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Internationalization
@@ -160,7 +160,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE =  'Asia/Kolkata'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

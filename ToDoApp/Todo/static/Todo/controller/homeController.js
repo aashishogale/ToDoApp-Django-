@@ -1,8 +1,9 @@
 var toDo = angular.module('Todo');
 toDo.controller('homeController', function ($scope, restService,
-	$location, $state, $uibModalStack, $uibModal,Upload,$interval,$filter,toastr) {
+	$location, $state, $uibModalStack, $uibModal, Upload, $interval, $filter, toastr) {
 
 	//$scope.isGrid=localStorage.getItem("Grid")
+	$scope.nameofuser=localStorage.getItem('name')
 	$scope.class = localStorage.getItem("Grid");
 	$scope.gridlist = function () {
 
@@ -11,7 +12,7 @@ toDo.controller('homeController', function ($scope, restService,
 		if ($scope.class == 'list') {
 			//$scope.width="32%"
 			$scope.class = 'grid'
-		
+
 			//$('.card').css("width", "32%");
 			//$scope.isGrid = false;
 			localStorage.setItem("Grid", "grid")
@@ -19,9 +20,9 @@ toDo.controller('homeController', function ($scope, restService,
 
 			//$scope.width="100%"
 			$scope.class = 'list'
-			
 
-			
+
+
 			//$('.card').css("width", "100%");
 			//$scope.isGrid = true;
 			localStorage.setItem("Grid", "list")
@@ -31,13 +32,13 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.class1 = localStorage.getItem("archiveGrid");
 	$scope.archivegridlist = function () {
-
+ 
 
 
 		if ($scope.class1 == 'list') {
 			//$scope.width="32%"
 			$scope.class1 = 'grid'
-		
+
 			//$('.card').css("width", "32%");
 			//$scope.isGrid = false;
 			localStorage.setItem("archiveGrid", "grid")
@@ -45,53 +46,54 @@ toDo.controller('homeController', function ($scope, restService,
 
 			//$scope.width="100%"
 			$scope.class1 = 'list'
-			
 
-			
+
+
 			//$('.card').css("width", "100%");
 			//$scope.isGrid = true;
 			localStorage.setItem("archiveGrid", "list")
 		}
 	}
-	$scope.options = ['#FFFFFF','#FF8A80', '#FFD180', '#FFFF8D', '#CFD8DC', '#80D8FF', '#A7FFEB', '#CCFF90'];
+	$scope.options = ['#FFFFFF', '#FF8A80', '#FFD180', '#FFFF8D', '#CFD8DC', '#80D8FF', '#A7FFEB', '#CCFF90'];
 	$scope.Notelist = [];
 	$scope.pinned = '';
 	$scope.others = '';
 	$scope.color = '';
 
-    $scope.colorChanged = function(newColor, oldColor,note) {
+	$scope.colorChanged = function (newColor, oldColor, note) {
 		console.log('from ', oldColor, ' to ', newColor);
-		note.color=newColor
+		note.color = newColor
 
 		var url = "note/" + note.id
-		var service = restService.service('PUT', url,note);
+		note.collab={}
+		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
 			$state.reload();
 		})
-		
-    }
+
+	}
 
 
 
 	$scope.getallcollaborators = function (note) {
-	
+
 		var service2 = restService.service('GET', 'collaborator', null, note.id);
 		$scope.collaborators = [];
 		$scope.collaborator = [];
 		service2.then(function (response) {
-		
-			
-			
-			
+
+
+
+
 			$scope.collaborators = response.data
-		
-			$scope.user={};
+
+			$scope.user = {};
 			for (i in $scope.collaborators) {
 				$scope.user = $scope.collaborators[i];
 
 				$scope.owner = $scope.user.owner
-				console.log("owner"+$scope.owner)
-				
+				console.log("owner" + $scope.owner)
+
 				$scope.getuser($scope.user.shareduser)
 
 
@@ -102,8 +104,8 @@ toDo.controller('homeController', function ($scope, restService,
 
 
 	}
-	
-  
+
+
 
 
 	$scope.getuser = function (user) {
@@ -112,23 +114,23 @@ toDo.controller('homeController', function ($scope, restService,
 		var url = "getuser/" + user;
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
-            
+
 			$scope.collaborator.push(response.data)
-			console.log("collabortorlist"+$scope.collaborator)
-			
-		  
-		
+			console.log("collabortorlist" + $scope.collaborator)
+
+
+
 
 		})
 
 	}
-	$scope.getcollabbynote =function(note){
+	$scope.getcollabbynote = function (note) {
 
-		var id=note.id
-		var url='getcollabbynote/'+id
-		var service=restService.service('GET',url)
-		service.then(function(response){
-		note.collab=response.data;
+		var id = note.id
+		var url = 'getcollabbynote/' + id
+		var service = restService.service('GET', url)
+		service.then(function (response) {
+			note.collab = response.data;
 			console.log(note)
 		})
 	}
@@ -136,20 +138,20 @@ toDo.controller('homeController', function ($scope, restService,
 
 
 	$scope.getownername = function () {
-		
-		$scope.ownername={}
+
+		$scope.ownername = {}
 		var url = "getuser/" + localStorage.getItem("id");
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
 
-			$scope.ownername=response.data
-           $scope.note1.ownername=$scope.ownername.username
-			console.log("here"+$scope.ownername.username)
+			$scope.ownername = response.data
+			$scope.note1.ownername = $scope.ownername.username
+			console.log("here" + $scope.ownername.username)
 		})
 
 	}
 
-	$scope.note={};
+	$scope.note = {};
 	var getallnotes = function () {
 		id = localStorage.getItem("id");
 		var service = restService.service('GET', 'notes');
@@ -163,8 +165,8 @@ toDo.controller('homeController', function ($scope, restService,
 					$scope.pinned = 'Pinned';
 					$scope.others = 'Others';
 				}
-               $scope.getcollabbynote($scope.note)
-			
+				$scope.getcollabbynote($scope.note)
+
 
 
 			}
@@ -173,30 +175,57 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.collabuser = {};
 	$scope.addCollaborator = function (note) {
-		var collaborator = {};
+		console.log(note)
+		if ($scope.collabuser.username != localStorage.getItem('name'))  {
+			var collaborator = {};
 
-		collaborator.owner = note.owner;
+			collaborator.owner = note.owner;
+
+			collaborator.note = note.id;
+
+			var url = "getuserbyusername/" + $scope.collabuser.username
+			var service2 = restService.service('GET', url);
+			service2.then(function (response) {
+
+				user = {}
+				user = response.data
+
+				collaborator.shareduser = user.id
+				 if($scope.containsObject(user,$scope.note.collab)==false){
+				savecollaborator(collaborator)
+				 }
+
+				 else{
+					toastr.error("collaborator already exists");
+				
 		
-		collaborator.note = note.id;
+					
+				}
+
+			})
+		}
 		
-		var url = "getuserbyusername/" + $scope.collabuser.username
-		var service2 = restService.service('GET', url);
-		service2.then(function (response) {
+		else{
+			toastr.error("cannot enter owner");
 		
-			user = {}
-			user = response.data
-	
-			collaborator.shareduser = user.id
+
 			
-			savecollaborator(collaborator)
-			$state.reload();
-		})
+		}
 
 	}
-
-	$scope.deleteCollaborator = function (note,user) {
+	$scope.containsObject = function(obj, list) {
+		var i;
+		for (i = 0; i < list.length; i++) {
+			if (angular.equals(list[i], obj)) {
+				return true;
+			}
+		}
+	
+		return false;
+	};
+	$scope.deleteCollaborator = function (note, user) {
 		var collaborator = {};
-        console.log(note)
+		console.log(note)
 		collaborator.owner = note.owner;
 		collaborator.note = note.id;
 		console.log("user" + $scope.collabuser.username)
@@ -217,7 +246,7 @@ toDo.controller('homeController', function ($scope, restService,
 	var removeCollaborator = function (collaborator) {
 		var url = "deletecollaborator/" + collaborator.owner + "/" + collaborator.note + "/" + collaborator.shareduser
 		var service2 = restService.service('GET', url);
-		service2.then(function(response){
+		service2.then(function (response) {
 			$state.reload()
 			console.log("deleted successfully")
 		})
@@ -227,28 +256,29 @@ toDo.controller('homeController', function ($scope, restService,
 		var service2 = restService.service('POST', "collaborator", collaborator);
 		service2.then(function (response) {
 			console.log("collab added successfully")
+			$state.reload();
 		})
 	}
 
 	getallnotes();
-	$scope.addnote={}
+	$scope.addnote = {}
 
 	$scope.createNote = function (addnote) {
-	    $scope.note1.ownername=localStorage.getItem("name")
+		$scope.note1.ownername = localStorage.getItem("name")
 		$scope.note1.owner = localStorage.getItem("id")
-		
+
 		$scope.note1.description = $("#description").html();
 		console.log($scope.note)
 		var service = restService.service('POST', 'createnote', $scope.note1);
 		service.then(function (response) {
-			note={};
+			note = {};
 			$state.reload();
 		})
 	};
 
 	$scope.checked = "col-md-3"
 
-	
+
 
 	$scope.archiveurl = "/static/Todo/img/archive.svg";
 	$scope.trashurl = "/static/Todo/img/trash.svg";
@@ -278,56 +308,56 @@ toDo.controller('homeController', function ($scope, restService,
 
 	};
 	interVal();
-					function interVal() {
+	function interVal() {
 
-						$interval(
-								function() {
-									var i = 0;
-									for (i; i < $scope.Notelist.length; i++) {
-										console.log("enter");
-										console.log("reminder"
-												+ $scope.Notelist[i].reminder)
-										if ($scope.Notelist[i].reminder != null) {
-											console
-													.log("reminder"
-															+ $scope.Notelist[i].reminder)
-											var reminderdate = $filter('date')
-													(
-															$scope.Notelist[i].reminder,
-															'yyyy-MM-dd HH:mm Z');
-											var currentDate = $filter('date')(
-													new Date(),
-													'yyyy-MM-dd HH:mm Z');
-											console.log("current date"
-													+ currentDate);
-											console.log("reminderdate"
-													+ reminderdate);
-											if (reminderdate === currentDate) {
-												console.log("toaster exeute");
-												toastr.success($scope.Notelist[i].title,'Reminder');
-												return
+		$interval(
+			function () {
+				var i = 0;
+				for (i; i < $scope.Notelist.length; i++) {
+					console.log("enter");
+					console.log("reminder"
+						+ $scope.Notelist[i].reminder)
+					if ($scope.Notelist[i].reminder != null) {
+						console
+							.log("reminder"
+							+ $scope.Notelist[i].reminder)
+						var reminderdate = $filter('date')
+							(
+							$scope.Notelist[i].reminder,
+							'yyyy-MM-dd HH:mm Z');
+						var currentDate = $filter('date')(
+							new Date(),
+							'yyyy-MM-dd HH:mm Z');
+						console.log("current date"
+							+ currentDate);
+						console.log("reminderdate"
+							+ reminderdate);
+						if (reminderdate === currentDate) {
+							console.log("toaster exeute");
+							toastr.success($scope.Notelist[i].title, 'Reminder');
+							return
 
-											}
-										}
-									}
-
-								}, 55000);
+						}
 					}
-					;
+				}
 
-	$scope.addReminder=function(note){
+			}, 55000);
+	}
+	;
+
+	$scope.addReminder = function (note) {
 		console.log(note)
 		$scope.editNote(note)
 	}
-$scope.note={}
+	$scope.note = {}
 	$scope.editNote = function (note) {
 		console.log(note)
-		$scope.note.collab={}
-		$scope.note.title=$(".title").html()
+		$scope.note.collab = {}
+		$scope.note.title = $(".title").html()
 		$scope.note.description = $(".description").html();
 		var url = "note/" + $scope.note.id
 		console.log(note)
-		var service = restService.service('PUT', url,note);
+		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
 			$state.reload();
 		})
@@ -336,9 +366,9 @@ $scope.note={}
 	$scope.archiveNote = function (note) {
 		note.isArchived = !note.isArchived
 		console.log(note)
-	
+
 		var url = "note/" + note.id
-		var service = restService.service('PUT', url,note);
+		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
 			$state.reload();
 		})
@@ -347,13 +377,9 @@ $scope.note={}
 		note.isPinned = !note.isPinned
 		$scope.editNote(note)
 	}
-$scope.addLabel=function(label){
+
 	
-
-}
-$scope.getLabelForUser=function(){
-
-}
+	
 
 	$scope.trashNote = function (note) {
 		note.isTrashed = !note.isTrashed
@@ -377,6 +403,23 @@ $scope.getLabelForUser=function(){
 
 	}
 
+
+	$scope.openLabelModal = function () {
+		console.log("inside modal")
+		
+
+		$scope.$modalInstance = $uibModal.open({
+			templateUrl: '/static/Todo/templates/Label.html',
+			scope: $scope,
+
+
+
+
+		}).result.then(function () {
+		}, function (res) {
+		});
+
+	}
 
 	$scope.opencollaborators = function (note) {
 		console.log("inside modal")
@@ -431,48 +474,78 @@ $scope.getLabelForUser=function(){
 
 	$scope.upload = function (file) {
 		Upload.upload({
-			
+
 			url: 'addimage',
-			data: { file: file ,owner:localStorage.getItem('id'),
-				headers:{
-				token:localStorage.getItem('token'),
-				id:localStorage.getItem('id'),
-				
-				'Cache-Control' : 'no-cache'
-				
-			
+			data: {
+				file: file, owner: localStorage.getItem('id'),
+				headers: {
+					token: localStorage.getItem('token'),
+					id: localStorage.getItem('id'),
+
+					'Cache-Control': 'no-cache'
+
+
+				}
 			}
-		}
 
 		}).then(function (resp) {
 			console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-		
-    //  data={
-	// 	 'image':file,
-	// 	 'owner':localStorage.getItem('id')
-	//  }
-	// var service=restService.service('POST','addimage',data);
-	// 	service.then(function(response){
-	// 	console.log(response.data)
-    //     console.log("this is done")
-	// })
-	
-	
+
+			//  data={
+			// 	 'image':file,
+			// 	 'owner':localStorage.getItem('id')
+			//  }
+			// var service=restService.service('POST','addimage',data);
+			// 	service.then(function(response){
+			// 	console.log(response.data)
+			//     console.log("this is done")
+			// })
+
+
 		});
 
 	};
 
 
-	$scope.getImage =function(){
-		var url="getimage/"+localStorage.getItem("id")
-		var service=restService.service('GET',url)
-		service.then(function(response){
+	$scope.getImage = function () {
+		var url = "getimage/" + localStorage.getItem("id")
+		var service = restService.service('GET', url)
+		service.then(function (response) {
 			console.log(response.data)
-			var image=response.data
+			var image = response.data
 			console.log(image)
-			$scope.imageurl = 'http://127.0.0.1:8000/media/'+image.image
+			$scope.imageurl = 'http://127.0.0.1:8000/media/' + image.image
 			console.log($scope.imageurl)
 		})
 	}
-   $scope.getImage();
+	$scope.getImage();
+
+
+
+
+	$scope.addLabel = function (label) {
+		var service = restService.service('POST', 'addlabel', label);
+		service.then(function (response) {
+			console.log("label added successfully")
+			$state.reload()
+		})
+
+	}
+	var getLabelForUser = function () {
+		$scope.labels = []
+		var service = restService.service('GET', 'getlabel');
+		service.then(function (response) {
+			$scope.labels = response.data
+			console.log($scope.labels)
+		})
+	}
+
+	$scope.addLabelToNote=function(label,note){
+		note.labels.push(label)
+		$scope.editNote(label)
+
+	}
+	getLabelForUser() 
+
+
 });

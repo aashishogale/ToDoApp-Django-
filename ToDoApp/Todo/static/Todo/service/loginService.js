@@ -5,7 +5,7 @@ toDo.factory('restService', function($http, $location) {
 	var details = {};
 	
 	details.service = function(method, url, data,noteid) {
-	
+	    console.log(data)
 		var httpobj={
 			method : method,
 			url : url,

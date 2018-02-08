@@ -69,7 +69,7 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Notes
         # fields = "__all__"
         fields = ('id', 'title', 'description', 'date_created',
-                  'owner', 'isArchived', 'isPinned', 'isTrashed','reminder','color','collab','ownername')
+                  'owner', 'isArchived', 'isPinned', 'isTrashed','reminder','color','collab','ownername','label')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -90,4 +90,4 @@ class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Labels
         # fields = "__all__"
-        fields = ('id', 'owner', 'label', 'note')
+        fields = ('id', 'owner', 'label')
