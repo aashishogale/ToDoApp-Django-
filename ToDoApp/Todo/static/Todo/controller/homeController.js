@@ -347,6 +347,13 @@ $scope.note={}
 		note.isPinned = !note.isPinned
 		$scope.editNote(note)
 	}
+$scope.addLabel=function(label){
+	
+
+}
+$scope.getLabelForUser=function(){
+
+}
 
 	$scope.trashNote = function (note) {
 		note.isTrashed = !note.isTrashed
