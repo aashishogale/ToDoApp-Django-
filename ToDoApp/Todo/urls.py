@@ -25,8 +25,10 @@ urlpatterns=[
     path('addlabel',views. LabelCreate.as_view(),name='addlabel'),
     path('getlabel',views. GetAllLabels.as_view(),name='getlabel'),
     path('addlabeltonote/<str:note>/<str:label>',views. AddNoteToLabel.as_view(),name='addlabeltonote'),
-    path('getlabelbynote',views. GetAllLabelsFromNote.as_view(),name='getlabelbynote'),
+    path('getlabelbynote/<str:noteid>',views. GetAllLabelsFromNote.as_view(),name='getlabelbynote'),
     path('getcollabbynote/<str:note>',views. GetCollabFromNote.as_view(),name='getcollabbynote'),
+    path('getnotebylabel/<str:labelid>',views. GetNotesFromLabel.as_view(),name='getlabelbynote'),
+
     ]
 
 

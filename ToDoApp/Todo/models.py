@@ -40,6 +40,7 @@ class Notes(models.Model):
     collab=models.ManyToManyField(User,related_name='notecollaborator',blank=True)
     label=models.ManyToManyField(Labels,related_name="notelabel",blank=True)
     ownername=models.CharField(max_length=2000,blank=True)
+    labelstring=models.ManyToManyField(Labels,related_name="templabel",blank=True)
     def __str__(self):
         return 
 

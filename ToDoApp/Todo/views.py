@@ -461,11 +461,14 @@ class NoteList(generics.ListAPIView):
         try:
             user = User.objects.get( id = user_id)
         except ObjectDoesNotExist:
+
             logger.warning('Warning: No user_id:%d  %sn', user_id,  str(e))
             response_data['message'] = "Invalid user"
             response.append(response_data.copy())
             return response
+
         except Exception as e:
+
             logger.error('ERROR: %sn', str(e))
             response.append(response_data.copy())
             return response
@@ -737,10 +740,10 @@ class GetAllLabelsFromNote(generics.ListCreateAPIView):
 
     def get_queryset(self):
 
-        id = self.request.META.get('HTTP_NOTEID')
+        id = self.kwargs['noteid']
         print("this is id", id)
 
-        labels = Labels.objects.filter(note__id=id)
+        labels = Labels.objects.filter(notelabel__id=id)
 
         return labels
 
@@ -766,3 +769,10 @@ class GetCollabFromNote(generics.ListAPIView):
         print(user)
         print(user.query)
         return user
+
+class GetNotesFromLabel(generics.ListAPIView):
+     serializer_class=NoteSerializer
+     def get_queryset(self):
+        labelid=self.kwargs["labelid"]
+        labelednotes=Notes.objects.filter(label=labelid)
+        return labelednotes

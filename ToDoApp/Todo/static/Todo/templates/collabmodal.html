@@ -1,12 +1,16 @@
 <div class="create-note container">
 
 
-   
+        <div class=row>
+                <div class="col-sm-1"></div>
     <p ng-bind-html="note.ownername"><span>Owner</span></p>
+        </div>
     <div ng-repeat="user in note.collab">
-            <div ng-if="user.username!=nameofuser">
-                <p ng-bind-html="user.username"></p>   
-                <input type="button" value="delete" ng-click="deleteCollaborator(note,user)">
+            <div class=row>
+                    <div class="col-sm-1"></div>
+                <p ng-bind-html="user.username"></p>  
+                <div class="col-sm-4"></div> 
+                <img src="{{cancelurl}}" value="delete" ng-click="deleteCollaborator(note,user)">
             </div>
         </div>
 
@@ -15,8 +19,8 @@
 
 
 
-    <input type="textbox" contenteditable="true" class="description" style="width: 80%; outline: none" aria-multiline="true"
-        contentEditable="true" id="editdescription " ng-model="collabuser.username">
+    <input type="textbox"  style="width: 100%; outline: none" placeholder="enter collaborator"
+       ng-model="collabuser.username">
 
     <div class="modal-footer row">
 

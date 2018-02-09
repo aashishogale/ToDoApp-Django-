@@ -2,6 +2,7 @@ var toDo = angular.module('Todo');
 toDo.controller('homeController', function ($scope, restService,
 	$location, $state, $uibModalStack, $uibModal, Upload, $interval, $filter, toastr) {
 
+
 	//$scope.isGrid=localStorage.getItem("Grid")
 	$scope.nameofuser=localStorage.getItem('name')
 	$scope.class = localStorage.getItem("Grid");
@@ -166,7 +167,7 @@ toDo.controller('homeController', function ($scope, restService,
 					$scope.others = 'Others';
 				}
 				$scope.getcollabbynote($scope.note)
-
+				$scope.getLabelForNote($scope.note)
 
 
 			}
@@ -260,7 +261,7 @@ toDo.controller('homeController', function ($scope, restService,
 		})
 	}
 
-	getallnotes();
+	//getallnotes();
 	$scope.addnote = {}
 
 	$scope.createNote = function (addnote) {
@@ -286,6 +287,9 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.pinurl = "/static/Todo/img/pin.svg";
 	$scope.collaburl = "/static/Todo/img/colloborator.svg";
 	$scope.reminderurl = "/static/Todo/img/reminder.svg";
+	$scope.cancelurl = "/static/Todo/img/cancel.svg";
+	$scope.checkurl = "/static/Todo/img/check.svg";
+
 	$scope.dropdown = false;
 	$scope.changeClass = function () {
 		$scope.showdropdown = !$scope.showdropdown;
@@ -303,7 +307,7 @@ toDo.controller('homeController', function ($scope, restService,
 		var service = restService.service('GET', 'userlogout');
 		service.then(function (response) {
 			localStorage.clear();
-			$state.reload();
+			$state.go('login');
 		})
 
 	};
@@ -347,7 +351,14 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.addReminder = function (note) {
 		console.log(note)
-		$scope.editNote(note)
+		note.collab={}
+		note.labelString={}
+		var url = "note/" + note.id
+		console.log(note)
+		var service = restService.service('PUT', url, note);
+		service.then(function (response) {
+			$state.reload();
+		})
 	}
 	$scope.note = {}
 	$scope.editNote = function (note) {
@@ -388,8 +399,8 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.openCustomModal = function (note) {
 		console.log("inside modal")
-		$scope.note = note
 
+		$scope.note=note
 		$scope.$modalInstance = $uibModal.open({
 			templateUrl: '/static/Todo/templates/EditNote.html',
 			scope: $scope,
@@ -410,6 +421,23 @@ toDo.controller('homeController', function ($scope, restService,
 
 		$scope.$modalInstance = $uibModal.open({
 			templateUrl: '/static/Todo/templates/Label.html',
+			scope: $scope,
+
+
+
+
+		}).result.then(function () {
+		}, function (res) {
+		});
+
+	}
+
+	$scope.addLabeltoNoteModal = function (note) {
+		console.log("inside modal")
+		$scope.note = note
+
+		$scope.$modalInstance = $uibModal.open({
+			templateUrl: '/static/Todo/templates/addlabeltonote.html',
 			scope: $scope,
 
 
@@ -536,16 +564,112 @@ toDo.controller('homeController', function ($scope, restService,
 		var service = restService.service('GET', 'getlabel');
 		service.then(function (response) {
 			$scope.labels = response.data
+			$scope.templabels=response.data
 			console.log($scope.labels)
 		})
 	}
-
-	$scope.addLabelToNote=function(label,note){
-		note.labels.push(label)
-		$scope.editNote(label)
+	$scope.getLabelForNote = function (note) {
+		$scope.note.labels ={} 
+		var url='getlabelbynote/'+note.id
+		var service = restService.service('GET', url);
+		service.then(function (response) {
+			note.labelstring = response.data
+			
+			console.log($scope.labels)
+		})
+	}
+	$scope.addlabeltonote=function(label,note){
+		console.log(label)
+		$scope.note=note
+		$scope.note.collab={}
+		$scope.note.labelstring={}
+		$scope.note.label.push(label.id)
+	
+		console.log("after push"+$scope.note)
+		var url = "note/" + $scope.note.id
+		var service = restService.service('PUT', url, $scope.note);
+		service.then(function (response) {
+			//$state.reload();
+			//getLabelForUser() 
+		// 	var index = $scope.templabels.indexOf(label);
+		// $scope.templabels.splice(index, 1); 
+		console.log("templabels"+$scope.templabels)
+			$scope.getLabelForNote($scope.note)
+		})
 
 	}
+
+	$scope.removelabelfromnote=function(label,note){
+		
+		$scope.remove(label,note)
+		
+
+	}
+    
+	 $scope.getnotebylabel=function(label){
+		 localStorage.setItem("labelid",label.id)
+		$scope.labellednotes=[]
+		localStorage.setItem("label",label.label)
+		$state.go('label')
+		getalllabelednotes()
+		
+	}
+
+var getalllabelednotes=function(){
+	$scope.displaylabel=localStorage.getItem("label")
+	var labelid=localStorage.getItem("labelid")
+	var url='getnotebylabel/'+labelid
+		var service=restService.service('GET',url);
+		service.then(function(response){
+			
+			$scope.labellednotes=response.data
+			console.log($scope.labellednotes)
+			for (i in $scope.labellednotes) {
+				
+
+				if ($scope.note.isPinned) {
+					$scope.pinned = 'Pinned';
+					$scope.others = 'Others';
+				}
+				$scope.getcollabbynote($scope.labellednotes[i])
+				$scope.getLabelForNote($scope.labellednotes[i])
+				console.log($scope.labellednotes[i])
+
+			}
+			
+		})
+
+}
+
+$scope.labelcolor="#607D8B";
+//getalllabelednotes();
+
+	$scope.remove = function(label,note) { 
+		var url = "note/" + note.id
+		$scope.note=note
+		var index = $scope.note.label.indexOf(label.id);
+		$scope.note.label.splice(index, 1); 
+		$scope.note.labelstring={}
+		$scope.note.collab={} 
+	    
+		var service = restService.service('PUT', url, $scope.note);
+	
+		service.then(function (response) {
+			//$state.reload();
+			console.log($scope.templabels)
+			// $scope.templabels.push(label)
+			$scope.getLabelForNote($scope.note)
+		}) 
+	  }
 	getLabelForUser() 
-
-
+	
+	var getnotes=function(){
+		if($state.current.name=='home'){
+			getallnotes();
+		}
+		else{
+			getalllabelednotes();
+		}
+	}
+	getnotes();
 });

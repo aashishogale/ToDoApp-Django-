@@ -11,7 +11,7 @@
             <a class="navbar-brand col-2 " href="#">Google keep</a>
 
             <div class="input-group col-5 padding-0">
-                <input class="form-control py-2" type="search" value="search" id="example-search-input">
+                <input class="form-control py-2" type="search" value="search" ng-model="search" id="example-search-input">
                 <span class="input-group-btn">
                     <button class="btn btn-outline-secondary" type="button">
                         <i class="fa fa-search"></i>
@@ -64,8 +64,7 @@
                     <a ng-click="openLabelModal()">Create new label</a>
                     <div>
                         <div ng-repeat="label in labels ">
-                            <p ng-bind-html="label.label"></p>
-                            <input type="button" value="delete" ng-click="deletelabel(label)">
+                            <p ng-bind-html="label.label" ng-click="getnotebylabel(label)"> </p>
                         </div>
                     </div>
                 </li>
@@ -180,7 +179,7 @@
 
                 <div class="masonry-grid" style="width:100%">
 
-                    <card ng-repeat="note in Notelist | filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card"
+                    <card ng-repeat="note in Notelist |filter:search| filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}" class="card"
                         style="background-color:{{note.color}};" ng-class="class">
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
 
@@ -193,10 +192,22 @@
                             </p>
                         </div>
                         <div ng-repeat="user in note.collab">
-                            <div ng-if="user.username!=nameofuser">
+                            <div class="label " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
                                 <p ng-bind-html="user.username"></p>
                             </div>
                         </div>
+                        <div class="row">
+                            <div ng-repeat="label in note.labelstring">
+
+                                <div class="label " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
+
+                                    <span ng-bind-html="label.label"> </span>
+                                    <img src="{{cancelurl}}" value="delete" ng-click="removelabelfromnote(label,note)"></img>
+
+                                </div>
+                            </div>
+                        </div>
+
 
 
 
@@ -208,22 +219,9 @@
 
                             <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
                             <img src="{{collaburl}}" ng-click="opencollaborators(note)"></img>
+
                             <div>
-                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
-
-                                <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
-
-                                    <li ng-click="trashNote(note);">trash note
-
-                                    </li>
-
-
-                                </ul>
-
-
-                            </div>
-                            <div>
-                                <img class=" btn dropdown-toggle" id="reminder" data-toggle="dropdown" src="{{reminderurl}}" style="height:30px;width:30px;"> </img>
+                                <img class=" btn dropdown-toggle" id="reminder" data-toggle="dropdown" src="{{reminderurl}}"> </img>
 
                                 <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
                                     <li>
@@ -235,9 +233,24 @@
                                     </li>
                                 </ul>
                             </div>
-
-
                             <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"></color-picker>
+
+                            <div>
+                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
+
+                                <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
+
+                                    <li ng-click="trashNote(note);">trash note
+
+                                    </li>
+                                    <li ng-click="addLabeltoNoteModal(note);">add label
+
+                                    </li>
+
+                                </ul>
+
+
+                            </div>
                         </footer>
                     </card>
 

@@ -89,6 +89,11 @@ app.config(['$stateProvider', '$urlRouterProvider',
         templateUrl: '/static/Todo/templates/enterotp.html',
         controller: 'loginController',
       })
+      .state('label', {
+        url: '/label',
+        templateUrl: '/static/Todo/templates/labellednotes.html',
+        controller: 'homeController',
+      })
       .state('/', {
         url: '/',
         resolve: {

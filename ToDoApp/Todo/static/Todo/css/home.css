@@ -466,3 +466,10 @@ top:130;
   .list{
     width:100%;
   }
+
+  .label{
+    background:"#C8C8C8";
+  }
+ img{ 
+    cursor: pointer;
+   }

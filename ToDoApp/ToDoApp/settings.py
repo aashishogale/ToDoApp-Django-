@@ -94,10 +94,10 @@ DATABASES = {
     'default': {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mynewdatabase',
-        'USER': 'aashish',
-        'PASSWORD': '12345678',
-        'HOST': 'localhost',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('HOST'),
         'PORT': '',
     }
 }
@@ -145,10 +145,10 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST = 'smtp.gmail.com'
 
-EMAIL_HOST_USER = 'ashtest1947@gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 
 # Must generate specific password for your app in [gmail settings][1]
-EMAIL_HOST_PASSWORD = 'alohomora'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD ')
 
 EMAIL_PORT = 587
 
