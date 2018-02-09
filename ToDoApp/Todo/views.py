@@ -713,6 +713,7 @@ class LabelCreate(GenericAPIView):
 
 class AddNoteToLabel(GenericAPIView):
     def post(self, request, *args, **kwargs):
+        
         noteid = kwargs['note']
         note = Notes.objects.get(id=noteid)
         labelid = kwargs['label']
@@ -726,12 +727,17 @@ class GetAllLabels(generics.ListCreateAPIView):
     serializer_class = LabelSerializer
 
     def get_queryset(self):
+        try:
+            id = self.request.META.get('HTTP_ID')
+           
+            user = User.objects.get(id=id)
+        except ObjectDoesNotExist:
+            data=[{
+                'error':'user does not exist'
+            }]
+            return data
 
-        id = self.request.META.get('HTTP_ID')
-        print("this is id", id)
-        user = User.objects.get(id=id)
         labels = Labels.objects.filter(owner=user)
-
         return labels
 
 
@@ -739,9 +745,18 @@ class GetAllLabelsFromNote(generics.ListCreateAPIView):
     serializer_class = LabelSerializer
 
     def get_queryset(self):
+        try:
+            id = self.kwargs['noteid']
 
-        id = self.kwargs['noteid']
-        print("this is id", id)
+            if(id==None):
+                raise ValueBlankError
+
+        except ValueBlankError:
+            data=[{
+                "error":"invalid request please try again"
+            }]
+            return data
+      
 
         labels = Labels.objects.filter(notelabel__id=id)
 
@@ -752,22 +767,34 @@ class GetCollabFromNote(generics.ListAPIView):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-
-        noteid = self.kwargs['note']
-        list1 = []
-        print(noteid)
-        id = self.request.META.get('HTTP_ID')
-        print("this is id", id)
-        note = Notes.objects.get(id=noteid)
-
-        collab = Collaborator.objects.filter(note=note).values('shareduser')
-
-        print(collab.query)
-        # print(collab)
+        try:
+            noteid = self.kwargs['note']
+            if(noteid==None):
+                raise ValueBlankError
+        except ValueBlankError:
+            data=[{
+                'error':'invalid request'
+            }]
+            return data
+        try:
+          
+            id = self.request.META.get('HTTP_ID')
+            print("this is id", id)
+            note = Notes.objects.get(id=noteid)
+        except ObjectDoesNotExist:
+            data=[{
+                'error':'note does not exist'
+            }]
+            return data
+        try:
+            collab = Collaborator.objects.filter(note=note).values('shareduser')
+        except ObjectDoesNotExist:
+            data=[]
+            return data
+           
+            # print(collab)
         user = User.objects.all().filter(id__in=Subquery(collab))
-        # #user=User.objects.raw('select  id,username from auth_user where auth_user.id in(select shareduser_id from "Todo_collaborator" where note_id=%s)',[noteid])
-        print(user)
-        print(user.query)
+        
         return user
 
 class GetNotesFromLabel(generics.ListAPIView):
