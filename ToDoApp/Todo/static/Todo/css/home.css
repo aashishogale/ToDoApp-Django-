@@ -136,6 +136,7 @@ a:hover {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    
 }
 
 #wrapper.toggled {
@@ -144,20 +145,21 @@ a:hover {
 
 #sidebar-wrapper {
     z-index: 1000;
-    /* left: 220px; */
+    /* left: 220px;  */
     width: 0;
     height: 100%;
     margin-left: -325px;
     overflow-y: auto;
     overflow-x: hidden;
-    background: #1a1a1a;
+    /* background: #1a1a1a; */
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
 .notecontainer{
-	position: absolute;
+  position: absolute;
+
 }
 #sidebar-wrapper::-webkit-scrollbar {
   display: none;
@@ -167,8 +169,9 @@ a:hover {
 	position: fixed;
     width: 220px;
 }
-#wrapper.toggled .notecontainer{
-    position: relative;
+#wrapper.toggled .notecontainer {
+  position: relative;
+
 }
 #page-content-wrapper {
     width: 100%;
@@ -177,7 +180,7 @@ a:hover {
 
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
-    /* margin-right: -220px; */
+     
 }
 
 /*-------------------------------*/
@@ -215,7 +218,7 @@ a:hover {
             transition: width .2s ease-in;
 
 }
-.sidebar-nav li:first-child a {
+/* .sidebar-nav li:first-child a {
     color: #fff;
     background-color: #1a1a1a;
 }
@@ -242,7 +245,7 @@ a:hover {
 }
 .sidebar-nav li:nth-child(9):before {
     background-color: #35acdf;   
-}
+} */
 .sidebar-nav li:hover:before,
 .sidebar-nav li.open:hover:before {
     width: 100%;
@@ -283,7 +286,7 @@ a:hover {
     margin: 0;
     border-radius: 0;
     border: none;
-    background-color: #222;
+    /* background-color: #222; */
     box-shadow: none;
 }
 
@@ -473,3 +476,42 @@ top:130;
  img{ 
     cursor: pointer;
    }
+
+.action-buttons-right-align {
+  float:right;
+}
+.action-buttons-left-align {
+  float:left;
+}
+.action-buttons {
+  padding:5px;
+  margin:0 10px;
+  min-width:5%;
+  cursor: pointer;
+}
+.action-remainder {
+  background-image: url("/static/Todo/img/reminder.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+.action-archive {
+  background-image: url("/static/Todo/img/archive.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+.action-pinnote {
+  background-image: url("/static/Todo/img/pin.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+.action-opencollaborators {
+  background-image: url("/static/Todo/img/colloborator.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+.action-picture {
+  background-image: url("/static/Todo/img/picture.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+

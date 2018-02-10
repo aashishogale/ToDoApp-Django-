@@ -3,6 +3,17 @@ toDo.controller('homeController', function ($scope, restService,
 	$location, $state, $uibModalStack, $uibModal, Upload, $interval, $filter, toastr) {
 
 
+		$scope.archiveurl = "/static/Todo/img/archive.svg";
+		$scope.trashurl = "/static/Todo/img/trash.svg";
+		$scope.moreurl = "/static/Todo/img/threedots.svg";
+		$scope.pinurl = "/static/Todo/img/pin.svg";
+		$scope.collaburl = "/static/Todo/img/colloborator.svg";
+		$scope.reminderurl = "/static/Todo/img/reminder.svg";
+		$scope.cancelurl = "/static/Todo/img/cancel.svg";
+		$scope.checkurl = "/static/Todo/img/check.svg";
+		$scope.pictureurl = "/static/Todo/img/picture.svg";
+	
+		$scope.note1={};
 	//$scope.isGrid=localStorage.getItem("Grid")
 	$scope.nameofuser=localStorage.getItem('name')
 	$scope.class = localStorage.getItem("Grid");
@@ -267,12 +278,12 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.createNote = function (addnote) {
 		$scope.note1.ownername = localStorage.getItem("name")
 		$scope.note1.owner = localStorage.getItem("id")
-
+		
 		$scope.note1.description = $("#description").html();
 		console.log($scope.note)
 		var service = restService.service('POST', 'createnote', $scope.note1);
 		service.then(function (response) {
-			note = {};
+			$scope.note1 = {};
 			$state.reload();
 		})
 	};
@@ -280,15 +291,6 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.checked = "col-md-3"
 
 
-
-	$scope.archiveurl = "/static/Todo/img/archive.svg";
-	$scope.trashurl = "/static/Todo/img/trash.svg";
-	$scope.moreurl = "/static/Todo/img/threedots.svg";
-	$scope.pinurl = "/static/Todo/img/pin.svg";
-	$scope.collaburl = "/static/Todo/img/colloborator.svg";
-	$scope.reminderurl = "/static/Todo/img/reminder.svg";
-	$scope.cancelurl = "/static/Todo/img/cancel.svg";
-	$scope.checkurl = "/static/Todo/img/check.svg";
 
 	$scope.dropdown = false;
 	$scope.changeClass = function () {
@@ -377,7 +379,8 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.archiveNote = function (note) {
 		note.isArchived = !note.isArchived
 		console.log(note)
-
+		note.collab={}
+		note.labelString={}
 		var url = "note/" + note.id
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
@@ -386,7 +389,15 @@ toDo.controller('homeController', function ($scope, restService,
 	}
 	$scope.pinNote = function (note) {
 		note.isPinned = !note.isPinned
-		$scope.editNote(note)
+		note.collab={}
+		note.labelString={}
+		
+		var url = "note/" + note.id
+		var service = restService.service('PUT', url, note);
+		service.then(function (response) {
+			$state.reload();
+		})
+	
 	}
 
 	
@@ -394,7 +405,13 @@ toDo.controller('homeController', function ($scope, restService,
 
 	$scope.trashNote = function (note) {
 		note.isTrashed = !note.isTrashed
-		$scope.editNote(note)
+		note.collab={}
+		note.labelString={}
+		var url = "note/" + note.id
+		var service = restService.service('PUT', url, note);
+		service.then(function (response) {
+			$state.reload();
+		})
 	}
 
 	$scope.openCustomModal = function (note) {
@@ -535,6 +552,41 @@ toDo.controller('homeController', function ($scope, restService,
 	};
 
 
+
+	$scope.uploadnote = function (file,note) {
+		Upload.upload({
+
+			url: 'addimagetonote',
+			data: {
+				file: file, note:note.id,
+				headers: {
+					token: localStorage.getItem('token'),
+					id: localStorage.getItem('id'),
+
+					'Cache-Control': 'no-cache'
+
+
+				}
+			}
+
+		}).then(function (resp) {
+			console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+            $state.reload();
+			//  data={
+			// 	 'image':file,
+			// 	 'owner':localStorage.getItem('id')
+			//  }
+			// var service=restService.service('POST','addimage',data);
+			// 	service.then(function(response){
+			// 	console.log(response.data)
+			//     console.log("this is done")
+			// })
+
+
+		});
+
+	};
+
 	$scope.getImage = function () {
 		var url = "getimage/" + localStorage.getItem("id")
 		var service = restService.service('GET', url)
@@ -584,6 +636,7 @@ toDo.controller('homeController', function ($scope, restService,
 		$scope.note.collab={}
 		$scope.note.labelstring={}
 		$scope.note.label.push(label.id)
+		// $scope.note.photo={}
 	
 		console.log("after push"+$scope.note)
 		var url = "note/" + $scope.note.id
@@ -664,11 +717,12 @@ $scope.labelcolor="#607D8B";
 	getLabelForUser() 
 	
 	var getnotes=function(){
-		if($state.current.name=='home'){
-			getallnotes();
+		if($state.current.name=='label'){
+			getalllabelednotes();
 		}
 		else{
-			getalllabelednotes();
+			
+			getallnotes();
 		}
 	}
 	getnotes();

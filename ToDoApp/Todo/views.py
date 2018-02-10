@@ -803,3 +803,34 @@ class GetNotesFromLabel(generics.ListAPIView):
         labelid=self.kwargs["labelid"]
         labelednotes=Notes.objects.filter(label=labelid)
         return labelednotes
+
+class AddImageToNote(GenericAPIView):
+
+    def post(self, request, *args, **kwargs):
+        print("inside here")
+        try:
+            noteid = request.data["note"]
+            print("note id",noteid)
+            if(noteid==None):
+                raise ValueBlankError
+        except ValueBlankError:
+                data={
+                    'error':'bad request'
+                }
+                return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+        try:
+        
+             note = Notes.objects.get(id=noteid)
+        except ObjectDoesNotExist:
+                 data={
+                     'error':'user does not exist'
+                 }
+
+  
+        note.photo = request.data["file"]
+        print(note.photo)
+        note.photourl=note.photo
+        note.save()
+        
+      
+        return Response(status=status.HTTP_200_OK)

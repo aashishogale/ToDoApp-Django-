@@ -50,5 +50,8 @@ function checkvalid() {
 }
 
 $('[data-toggle="offcanvas"]').click(function () {
+	console.log("entered here")
 	$('#wrapper').toggleClass('toggled');
 });
+
+

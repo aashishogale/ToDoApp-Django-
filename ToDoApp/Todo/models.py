@@ -27,8 +27,8 @@ class Labels(models.Model):
 
 class Notes(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
-    title=models.CharField(max_length=2000)
-    description=models.TextField(max_length=2000)
+    title=models.CharField(max_length=2000,blank=True)
+    description=models.TextField(max_length=2000,blank=True)
     date_created=models.DateTimeField(auto_now_add=True)
     isArchived=models.BooleanField(default=False)
     isPinned=models.BooleanField(default=False)
@@ -41,6 +41,8 @@ class Notes(models.Model):
     label=models.ManyToManyField(Labels,related_name="notelabel",blank=True)
     ownername=models.CharField(max_length=2000,blank=True)
     labelstring=models.ManyToManyField(Labels,related_name="templabel",blank=True)
+    photo = models.ImageField(blank=True,upload_to='userimages/%m-%Y/')
+    photourl=models.CharField(max_length=100,blank=True)
     def __str__(self):
         return 
 
