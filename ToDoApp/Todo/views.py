@@ -834,3 +834,16 @@ class AddImageToNote(GenericAPIView):
         
       
         return Response(status=status.HTTP_200_OK)
+
+class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Labels.objects.all()
+    serializer_class = LabelSerializer
+
+
+class NotePhotoDelete(GenericAPIView):
+    def post(self,request,*args,**kwargs):
+        noteid=kwargs['noteid']
+        note=Notes.objects.get(id=noteid)
+        note.photourl=''
+        note.photo.delete(save=true)
+        return Response(status=status.HTTP_200_OK)

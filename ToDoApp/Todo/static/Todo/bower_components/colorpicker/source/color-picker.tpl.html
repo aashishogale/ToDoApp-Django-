@@ -1,8 +1,7 @@
 <div class="color-picker">
     <img src="/static/Todo/img/archive.svg"class="selected-color"></img>
     <div class="color-palette">
-        <div ng-repeat="option in vm.options"
-              ng-style="{'background-color': option}"
+        <div ng-repeat="option in vm.options" class="col-md-4"
              
               ng-click="vm.changeColor(option)"></div>
     </div>

@@ -278,7 +278,7 @@ toDo.controller('homeController', function ($scope, restService,
 	$scope.createNote = function (addnote) {
 		$scope.note1.ownername = localStorage.getItem("name")
 		$scope.note1.owner = localStorage.getItem("id")
-		
+
 		$scope.note1.description = $("#description").html();
 		console.log($scope.note)
 		var service = restService.service('POST', 'createnote', $scope.note1);
@@ -391,7 +391,8 @@ toDo.controller('homeController', function ($scope, restService,
 		note.isPinned = !note.isPinned
 		note.collab={}
 		note.labelString={}
-		
+		var file = new File([note.photo], "note.photourl");
+		$scope.file;
 		var url = "note/" + note.id
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
@@ -667,7 +668,15 @@ toDo.controller('homeController', function ($scope, restService,
 		getalllabelednotes()
 		
 	}
-
+	 $scope.deletelabel=function(label){
+	  var url="deletelabel/"+label.id
+	  var service=restService.service('DELETE',url);
+	  service.then(function(response){
+		  toastr.success("label deleted")
+		  $state.reload()
+	  })
+		
+	}
 var getalllabelednotes=function(){
 	$scope.displaylabel=localStorage.getItem("label")
 	var labelid=localStorage.getItem("labelid")

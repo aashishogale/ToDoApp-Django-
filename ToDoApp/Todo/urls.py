@@ -29,6 +29,8 @@ urlpatterns=[
     path('getcollabbynote/<str:note>',views. GetCollabFromNote.as_view(),name='getcollabbynote'),
     path('getnotebylabel/<str:labelid>',views. GetNotesFromLabel.as_view(),name='getlabelbynote'),
     path('addimagetonote',views. AddImageToNote.as_view(),name='addimagetonote'),
+    path('deletelabel/<str:pk>',views.  LabelDetail.as_view(),name='deletelabel'),
+    path('deleteimage/<str:noteid>',views.  LabelDetail.as_view(),name='deleteimage'),
 
     ]
 

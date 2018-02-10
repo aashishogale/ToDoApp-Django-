@@ -1,11 +1,11 @@
 <div class="create-note container">
 
-
+<div><h1>Add Label to user</h1></div>
    
        
             <div ng-repeat="label in labels ">
                 <div class="row">
-                
+                <div class ="col-sm-1"></div>
                 <p ng-bind-html="label.label"></p>
                 <div class="col-sm-3"></div>
                 <img src="{{cancelurl}}" value="delete" ng-click="deletelabel(label)">
@@ -17,11 +17,11 @@
     
     
     
-        <input type="textbox"  class="description" style="width: 100%; outline: none" placeholder="enter label here" ng-model="label.label">
+        
     
         <div class="modal-footer row">
-    
-            <div class="col-md-8 "></div>
+                <input type="textbox"  class="description" style="width: 80%; outline: none" placeholder="enter label here" ng-model="label.label">
+
             <img src="{{checkurl}}" ng-click="addLabel(label); " value="submit" class="noteenter">
     
             </footer>

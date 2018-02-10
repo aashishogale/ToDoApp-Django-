@@ -3,7 +3,7 @@ angular.module('tb-color-picker', [])
         $templateCache.put('color-picker.tpl.html', '<div class="color-picker">'+
             '<div class="selected-color" ng-style="{\'background-color\': vm.color}"></div>' +
             '<div class="color-palette">'+
-                '<div ng-repeat="option in vm.options"'+
+                '<div ng-repeat="option in vm.options" '+
                 'ng-style="{\'background-color\': option}"'+
                 'ng-class="{\'palette-selected-color\': option == vm.color, \'transparent-color\': option == \'transparent\'}"'+
                 'ng-click="vm.changeColor(option)"></div>'+
