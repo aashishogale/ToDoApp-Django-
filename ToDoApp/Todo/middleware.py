@@ -19,7 +19,7 @@ class JWTAuthenticationMiddleware:
         jwttoken=request.META.get('HTTP_TOKEN')
         # print("hello")
         # print(jwttoken)
-        if current_url=='userlogin' or current_url==None or  current_url=='userregister' or current_url=='startlogin' or current_url=='verifytoken' or current_url=='addimage' or current_url=='getimage' or current_url=='generateOTP' or current_url=='checkOTP' or current_url=='changepassword' or current_url=='addimagetonote':
+        if current_url=='userlogin' or current_url==None or  current_url=='userregister' or current_url=='startlogin' or current_url=='verifytoken' or current_url=='addimage' or current_url=='getimage' or current_url=='generateOTP' or current_url=='checkOTP' or current_url=='changepassword' or current_url=='addimagetonote'or current_url=='authfacebook':
             print("allowed")
             return None
         # print(jwttoken)

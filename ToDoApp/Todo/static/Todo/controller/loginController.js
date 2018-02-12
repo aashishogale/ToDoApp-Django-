@@ -94,5 +94,17 @@ toDo.controller('loginController', function($scope, restService,
 					$scope.error = response.data;
 				});
 			}
-	
+	$scope.facebooklogin=function(provider){
+				console.log('inside')
+				var service=$auth.authenticate(provider)
+				service.then(function(response){
+					localStorage.setItem("token",response.data.token)
+					localStorage.setItem("Grid","grid")
+					localStorage.setItem("archiveGrid","grid")
+					localStorage.setItem("trashGrid","grid")
+					localStorage.setItem("id",response.data.id)
+					localStorage.setItem("name",response.data.username)
+					$location.path('/home');
+				})
+			}
 })

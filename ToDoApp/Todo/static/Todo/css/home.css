@@ -518,7 +518,12 @@ img{
   background-repeat: no-repeat;
   background-position: center; 
 }
-
+.logo {
+  background-image: url("/static/Todo/img/logo.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+  height:35px
+}
 a:hover{
   background-color: #726f6f;
   cursor:pointer;

@@ -9,28 +9,41 @@
                     <span class="hamb-bottom"></span>
                 </button>
                 <div class="col-lg-1"> </div>
-                <a class="navbar-brand col-lg-1 " href="#" >Google keep</a>
+                <a class="navbar-brand col-lg-1 logo" href="#" ></a><h3 style="height:35px">Keep</h3>
                 <div class="col-lg-1"></div>
-                <div class="input-group col-lg-5 padding-0">
+                <div class="input-group col-lg-6 padding-0">
                     <input class="form-control py-2" type="search" value="search" ng-model="search" id="example-search-input" style="height:40px;">
 
                     <div class="col-lg-2"></div>
                     <i class="fa fa-th-large fa-2x padding-0" ng-click="gridlist();" aria-hidden="true"></i>
                 </div>
 
-                <div class="col-lg-2"></div>
+                <div class="col-lg-1"></div>
                 <div class="dropdown navbar-right">
-                    <!-- <div class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background:transparent;height: 35px; border-radius:50%; background-image:{{imageurl}}"ng-click="getuser();">  -->
+                
 
-                    -
-                    <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" ng-src="{{imageurl}}" style="height: 50px; border-radius:50%;float:left;"
+                    
+                    <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" ng-src="{{imageurl}}" style="height: 50px; border-radius:50%;float:left; width:75px;"
                         ng-click="changeClass();">
 
 
                     <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
                         <li>
-                            <a ngf-select="upload($file)">Upload on file select</a>
+                            <a ng-click="addImageModal()">Upload on file select</a>
+                          
 
+                        <!-- <button ngf-select ng-model="picFile" accept="image/*">
+                            Select Picture</button>
+                          <div ngf-drop ng-model="picFile" ngf-pattern="image/*"
+                               class="cropArea">
+                            <img-crop image="picFile  | ngfDataUrl"                 
+                                      result-image="croppedDataUrl" ng-init="croppedDataUrl=''">
+                            </img-crop>
+                          </div>
+                          <div>
+                            <img ng-src="{{croppedDataUrl}}" />
+                          </div>
+                          <button ng-click="upload(croppedDataUrl)">Submit</button>--> 
                         </li>
                         <li>
                             <a class="signout" ng-click=logout();>signout</a>
@@ -100,36 +113,33 @@
 
                         </div>
                         <footer class="row">
-
-                            <img src="{{archiveurl}}" ng-click="archiveNote(note)"></img>
-
-                            <img src="{{pinurl}}" ng-click="pinNote(note)"></img>
-                            <img src="{{collaburl}}" ng-click="opencollaborators(note)"></img>
-                            <div>
-                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
-
-                                <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
-
-                                    <li ng-click="trashNote(note);">trash note
-
-                                    </li>
-                                </ul>
+                           
+                            <div class="action-buttons action-opencollaborators" data-toggle="tooltip" data-placement="top" title="opencollaborator"
+                                ng-click="opencollaborators(note)">
                             </div>
+                            <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
                             <div>
-                                <img class=" btn dropdown-toggle" id="reminder" data-toggle="dropdown" src="{{reminderurl}}" style="height:30px"> </img>
-
+                                <img class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown" src="{{reminderurl}}"> </img>
                                 <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
                                     <li>
                                         <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
                                         </datetimepicker>
                                     </li>
                                     <li ng-click="addReminder(note);">reminder
-
                                     </li>
                                 </ul>
                             </div>
-
-                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"></color-picker>
+                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"   data-toggle="tooltip"
+                                data-placement="top" title="color"></color-picker>
+                            <div class="action-buttons-right-align">
+                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
+                                <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
+                                    <li><a ng-click="trashNote(note);">trash note
+                                    </a></li>
+                                    <li><a ng-click="addLabeltoNoteModal(note);">add label
+                                    </a></li>
+                                </ul>
+                            </div>
                             <div class='col-md-7'></div>
                             <a style="background:transparent;" ng-click="createNote(addnote);show=false;showthis=true" class="noteenter">Done</a>
                         </footer>
@@ -148,7 +158,7 @@
 
                         <card ng-repeat="note in Notelist |filter:search| filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}"
                         class="card" style="background-color:{{note.color}};" ng-class="class">
-                        <img src="http://127.0.0.1:8000/media/{{note.photourl}}" style="height:170px;width:100%">
+                        <img src="http:/localhost/media/{{note.photourl}}" style="height:170px;width:100%">
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
 
                         <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="showdescription"></p>

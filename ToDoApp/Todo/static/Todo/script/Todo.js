@@ -1,7 +1,7 @@
-var app = angular.module('Todo', ['ui.router', 'satellizer', 'ngSanitize','ngAnimate','ui.bootstrap','ngFileUpload','ui.bootstrap.datetimepicker','toastr','tb-color-picker'])
+var app = angular.module('Todo', ['ui.router', 'satellizer', 'ngSanitize','ngAnimate','ui.bootstrap','ngFileUpload','ui.bootstrap.datetimepicker','toastr','tb-color-picker','ngImgCrop'])
 console.log("entered module")
-app.config(['$stateProvider', '$urlRouterProvider',
-  function ($stateProvider, $urlRouterProvider, stateService) {
+app.config(['$stateProvider', '$urlRouterProvider','$authProvider',
+  function ($stateProvider, $urlRouterProvider, stateService,$authProvider) {
 
     var skipIfLoggedIn = ['$q', '$auth', function ($q, $auth) {
       var deferred = $q.defer();
@@ -23,6 +23,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
       return deferred.promise;
     }];
 
+    
 
     $stateProvider
       .state('register', {
@@ -72,6 +73,12 @@ app.config(['$stateProvider', '$urlRouterProvider',
       .state('collabmodal', {
         url: '/collabmodal',
         templateUrl: '/static/Todo/templates/collabmodal.html',
+        controller: 'homeController',
+      })
+
+      .state('imagemodal', {
+        url: '/imagemodal',
+        templateUrl: '/static/Todo/templates/imagemodal.html',
         controller: 'homeController',
       })
       .state('archivenote', {

@@ -19,7 +19,7 @@ from rest_framework_jwt.settings import api_settings
 from random import randint
 from .models import Notes, Collaborator, Profile, Labels
 from django.core.mail import EmailMessage
-from django.core.cache import cache
+# from django.core.cache import cache
 from pyee import EventEmitter
 import asyncio
 from functools import wraps
@@ -27,14 +27,22 @@ import redis
 from django.db.models import Q
 from itertools import chain
 # from rest_framework import
+from urllib.parse import parse_qsl
 from django.conf import settings
+import requests
+
 import logging
 import time
-from django.db.models import OuterRef, Subquery
-
+from django.db.models import OuterRef, Subquery 
+import json
 # Get an instance of a logger()
-
-logging.basicConfig(filename='/home/bridgelabz/TodoAppDjango/ToDoApp/logger.log', level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
+# most_viewed='abcd'
+# #logger.warning("logged in successfully")
+# #cache = redis.StrictRedis(host='localhost', decode_responses=True)
+# cache.set('news.stories.most_viewed', most_viewed)
+# data = cache.get(['news.stories.most_viewed'])
+# print(data)
+logging.basicConfig( level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
 
                     datefmt='%Y-%m-%d %H:%M:%S',)
 logger = logging.getLogger(__name__)
@@ -120,8 +128,10 @@ class UserLoginView(GenericAPIView):
             #set the cache
             cache = redis.StrictRedis(host='localhost', decode_responses=True)
             cache.set(jwttoken, user.username)
-            logger.warning("logged in successfully")
-
+            # most_viewed='abcd'
+            # logger.warning("logged in successfully")
+            # cache.set('news.stories.most_viewed', most_viewed)
+            # data = cache.get_many(['news.stories.most_viewed'])
             #set the data for response
             data = {
                 "username": user.username,
@@ -175,15 +185,16 @@ class VerifyToken(GenericAPIView):
                     username = jwt_get_username_from_payload(payload)
                    
             except ValueBlankError:
-                return redirect('http://127.0.0.1:8000/ToDoApp/#!/register')  
+
+                return redirect(settings.REGISTRATION_URL)  
 
             #update the user
             User.objects.filter(username=username).update(is_active=True)
         
         
         except ObjectDoesNotExist:
-                return redirect('http://127.0.0.1:8000/ToDoApp/#!/register')
-        return redirect('http://127.0.0.1:8000/ToDoApp/')
+                return redirect(settings.REGISTRATION_URL)
+        return redirect(settings.HOME_URL)
     
 
         
@@ -282,7 +293,6 @@ class CheckOTP(GenericAPIView):
                 user = User.objects.get(email=useremail)
 
         except ObjectDoesNotExist:
-
             data={
                 "error":"invalid user"
             }
@@ -290,9 +300,7 @@ class CheckOTP(GenericAPIView):
             return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
 
         except ValueBlankError:
-
             data={
-
                "error":"invalid otp"
             }
 
@@ -321,7 +329,6 @@ class UserLogoutView(GenericAPIView):
             if(jwttoken==None):
                 raise ValueBlankError
             else:
-
                 #deletefrom cache
                 cache = redis.StrictRedis(host='localhost', decode_responses=True)
                 cache.delete(jwttoken)
@@ -421,7 +428,7 @@ def sendmail(useremail, jwttoken):
     request = None
     from django.core.mail import EmailMessage
 
-    url = 'http://127.0.0.1:8000' + \
+    url = settings.BASE_URL + \
         reverse('todo:verifytoken', args=[jwttoken])
     # http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
     message = 'Dear User, </br> Please verify your email by clicking on the below link ' + \
@@ -655,8 +662,16 @@ class AddImage(GenericAPIView):
                      'error':'user does not exist'
                  }
 
-  
-        profile.photo = request.data["file"]
+        import base64
+     
+        imgdata = base64.b64decode(request.data['file'])
+        # filename = request.data['filename']  # I assume you have a way of picking unique filenames
+        # with open(filename, 'wb') as f:
+        #     f.write(imgdata)
+        from django.core.files.base import ContentFile
+
+        profile.photo = ContentFile(imgdata, request.data['filename'])
+        logger.warning(profile.photo)
         profile.save()
         
       
@@ -841,9 +856,65 @@ class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class NotePhotoDelete(GenericAPIView):
-    def post(self,request,*args,**kwargs):
+    def  post(self,request,*args,**kwargs):
         noteid=kwargs['noteid']
         note=Notes.objects.get(id=noteid)
         note.photourl=''
         note.photo.delete(save=true)
         return Response(status=status.HTTP_200_OK)
+
+class FacebookLogin(GenericAPIView):
+     serializer_class = UserSerializer
+     def post(self,request,*args,**kwargs):
+    
+        access_token_url = 'https://graph.facebook.com/v2.3/oauth/access_token'
+        graph_api_url = 'https://graph.facebook.com/v2.3/me?fields=id,name,email'
+
+        params = {
+             'client_id': request.data.get('clientId'),
+             'redirect_uri': request.data.get('redirectUri'),
+             'client_secret': settings.FACEBOOK_SECRET,
+             'code': request.data.get('code'),
+             'scope':'email'
+        }
+
+        # Step 1. Exchange authorization code for access token.
+        r = requests.get(access_token_url, params=params)
+        logger.warning("r.text")
+        logger.warning(r.text)
+        #access_token = dict(parse_qsl(r.text))["access_token"]
+        dicto=json.loads(r.text)
+        print("this is dictotoken")
+        print(dicto['access_token'])
+        logger.warning("this is accesstoken")
+        # Step 2. Retrieve information about the current user.
+        r = requests.get(graph_api_url, params=dicto)
+        print(r.text)
+        profile = json.loads(r.text)
+        randomno = randint(10000, 99999)
+        try:
+            print(profile['email'])
+            user=User.objects.get(email=profile['email'])
+        except ObjectDoesNotExist:
+                 user = User.objects.create(email=profile['email'],username=profile['name'])
+                 user.save()
+      
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+      
+        payload = jwt_payload_handler(user)
+        jwttoken = jwt_encode_handler(payload)
+     
+        data={
+             
+                "username": user.username,
+                "id": user.id,
+                "token": jwttoken
+
+            
+        }
+        cache = redis.StrictRedis(host='localhost', decode_responses=True)
+        cache.set(jwttoken, user.username)
+        profile = Profile.objects.create(owner=user)
+        profile.save()
+        return Response(data=data,status=status.HTTP_200_OK)

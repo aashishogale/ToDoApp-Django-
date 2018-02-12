@@ -101,6 +101,27 @@ DATABASES = {
         'PORT': '',
     }
 }
+# When using TCP connections
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'redis_cache.RedisCache',
+#         'LOCATION': [
+#             'localhost:6379',
+#         ],
+#         'OPTIONS': {
+#             'DB': 1,
+#             'PASSWORD': '',
+#             'PARSER_CLASS': 'redis.connection.HiredisParser',
+#             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+#             'CONNECTION_POOL_CLASS_KWARGS': {
+#                 'max_connections': 50,
+#                 'timeout': 20,
+#             },
+#             'MAX_CONNECTIONS': 1000,
+#             'PICKLE_VERSION': -1,
+#         },
+#     },
+# }
 
 # CACHES = {
 #     'default': {
@@ -181,23 +202,29 @@ LOGGING = {
     'loggers': {
         'Todo': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'WARNING',
             'propagate': True,
         },
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'WARNING',
             'propagate': True,
         },
     },
 }
 
+FACEBOOK_SECRET=os.getenv('FACEBOOK_SECRET')
+FACEBOOK_CLIENT_ID=os.getenv('FACEBOOK_CLIENT_ID')
+REDIRECT_URI=os.getenv('REDIRECT_URI')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-
+BASE_URL='http://localhost'
+REGISTRATION_URL=BASE_URL+'/ToDoApp/#!/register'
+HOME_URL=BASE_URL+'/ToDoApp/'
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 #MEDIA_ROOT = 'media/'
 # print(os.path.join(BASE_DIR, '/media/'))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+

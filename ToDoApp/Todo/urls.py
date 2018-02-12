@@ -31,7 +31,7 @@ urlpatterns=[
     path('addimagetonote',views. AddImageToNote.as_view(),name='addimagetonote'),
     path('deletelabel/<str:pk>',views.  LabelDetail.as_view(),name='deletelabel'),
     path('deleteimage/<str:noteid>',views.  LabelDetail.as_view(),name='deleteimage'),
-
+    path('authfacebook',views. FacebookLogin .as_view(),name='authfacebook'),
     ]
 
 

@@ -466,7 +466,22 @@ toDo.controller('homeController', function ($scope, restService,
 		});
 
 	}
+	$scope.addImageModal = function () {
+		console.log("inside modal")
+	
 
+		$scope.$modalInstance = $uibModal.open({
+			templateUrl: '/static/Todo/templates/imagemodal.html',
+			scope: $scope,
+
+
+
+
+		}).result.then(function () {
+		}, function (res) {
+		});
+
+	}
 	$scope.opencollaborators = function (note) {
 		console.log("inside modal")
 		$scope.note = note
@@ -517,13 +532,21 @@ toDo.controller('homeController', function ($scope, restService,
 	// 
 	// 
 	// 
+	function getBase64Image(base64string) {
+		return base64string.replace(/^data:image\/(png|jpg);base64,/, "");
+	}
 
-	$scope.upload = function (file) {
+	$scope.upload = function (croppeddataurl,filename) {
+		console.log(croppeddataurl)
+		var blob = new Blob([croppeddataurl], {type: 'image/jpg'});
+	
+		var file =  JSON.stringify(getBase64Image(croppeddataurl))
+		console.log("this is"+file)
 		Upload.upload({
 
 			url: 'addimage',
 			data: {
-				file: file, owner: localStorage.getItem('id'),
+				file: file,filename:filename, owner: localStorage.getItem('id'),
 				headers: {
 					token: localStorage.getItem('token'),
 					id: localStorage.getItem('id'),
@@ -587,6 +610,28 @@ toDo.controller('homeController', function ($scope, restService,
 		});
 
 	};
+	var ctrl = function(){
+		this.data = {
+			selected:{src:null},
+			imgToCrop:null,
+		};
+	};
+	
+	
+	ctrl.prototype.onFileSelect = function (files) {
+		var file = files[0];
+		var _this = this;
+		var reader = new FileReader();
+	
+		reader.onloadend = function () {
+			_this.$scope.$apply(function(){
+				_this.data.imgToCrop = reader.result;
+			});
+		}
+	
+		reader.readAsDataURL(file);   
+	};
+	
 
 	$scope.getImage = function () {
 		var url = "getimage/" + localStorage.getItem("id")
@@ -594,7 +639,7 @@ toDo.controller('homeController', function ($scope, restService,
 		service.then(function (response) {
 			console.log(response.data)
 			var image = response.data
-			console.log(image)
+			console.log("here is "+image.image)
 			$scope.imageurl = 'http://127.0.0.1:8000/media/' + image.image
 			console.log($scope.imageurl)
 		})
@@ -735,4 +780,6 @@ $scope.labelcolor="#607D8B";
 		}
 	}
 	getnotes();
+
+	
 });
