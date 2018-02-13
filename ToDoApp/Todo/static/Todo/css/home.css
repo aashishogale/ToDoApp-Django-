@@ -518,6 +518,54 @@ img{
   background-repeat: no-repeat;
   background-position: center; 
 }
+.action-threedots {
+  background-image: url("/static/Todo/img/threedots.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+.action-grid{
+ 
+    background-image: url("/static/Todo/img/grid.svg");
+    background-repeat: no-repeat;
+    background-position: center; 
+  
+}
+.action-color{
+ 
+  background-image: url("/static/Todo/img/color.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+
+}
+.action-trash{
+ 
+  background-image: url("/static/Todo/img/trash.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+
+}
+.action-cancel{
+ 
+  background-image: url("/static/Todo/img/cancel.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+
+}
+.action-check{
+ 
+  background-image: url("/static/Todo/img/check.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+
+}
+.action-label{
+ 
+  background-image: url("/static/Todo/img/label.svg");
+  background-repeat: no-repeat;
+  background-position: center; 
+  height:10px;
+
+}
 .logo {
   background-image: url("/static/Todo/img/logo.svg");
   background-repeat: no-repeat;

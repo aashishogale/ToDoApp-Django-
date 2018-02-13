@@ -10,12 +10,12 @@
         <div ng-repeat="label in labels">
             <div class="row">
                 <p ng-bind-html="label.label"></p>
-           
+
                 <img src="{{checkurl}}" value="add" ng-click="addlabeltonote(label,note)">
                 <div class="col-md -7"></div>
-                <img  src="{{cancelurl}}" value="remove" ng-click="removelabelfromnote(label,note)">
+                <div class="action-cancel" value="remove" ng-click="removelabelfromnote(label,note)">
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>

@@ -95,8 +95,14 @@ toDo.controller('loginController', function($scope, restService,
 				});
 			}
 	$scope.facebooklogin=function(provider){
+		var userData={
+			code:'',
+			redirectUri: 'http://localhost:8000/ToDoApp/',
+	        clientId: '155877838375438',
+
+		}
 				console.log('inside')
-				var service=$auth.authenticate(provider)
+				var service=$auth.authenticate(provider,userData)
 				service.then(function(response){
 					localStorage.setItem("token",response.data.token)
 					localStorage.setItem("Grid","grid")
@@ -105,6 +111,29 @@ toDo.controller('loginController', function($scope, restService,
 					localStorage.setItem("id",response.data.id)
 					localStorage.setItem("name",response.data.username)
 					$location.path('/home');
+					console.log(response.data)
+
+				})
+			}
+
+			$scope.Googlelogin=function(provider){
+				var userData={
+					code:'',
+					redirectUri: 'http://localhost:8000/ToDoApp/',
+					clientId: '839674040295-jmp3e3ufmkkg5dfc63po2h83k1bkbpu3.apps.googleusercontent.com',
+		
+				}
+				console.log('inside')
+				var service=$auth.authenticate(provider)
+				service.then(function(response,userData){
+					localStorage.setItem("token",response.data.token)
+					localStorage.setItem("Grid","grid")
+					localStorage.setItem("archiveGrid","grid")
+					localStorage.setItem("trashGrid","grid")
+					localStorage.setItem("id",response.data.id)
+					localStorage.setItem("name",response.data.username)
+					 $location.path('/home');
+					console.log(response.data);
 				})
 			}
 })

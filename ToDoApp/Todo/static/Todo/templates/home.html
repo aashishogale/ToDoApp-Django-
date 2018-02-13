@@ -1,36 +1,37 @@
 <div class="container">
     <div class="wrapper" id="wrapper">
         <nav class="navbar fixed-top row  justify-content-start" style="background-color:#fb0">
-  
-                
-                <button type="button" class="hamburger is-closed "data-toggle="offcanvas">
-                    <span class="hamb-top"></span>
-                    <span class="hamb-middle"></span>
-                    <span class="hamb-bottom"></span>
-                </button>
-                <div class="col-lg-1"> </div>
-                <a class="navbar-brand col-lg-1 logo" href="#" ></a><h3 style="height:35px">Keep</h3>
-                <div class="col-lg-1"></div>
-                <div class="input-group col-lg-6 padding-0">
-                    <input class="form-control py-2" type="search" value="search" ng-model="search" id="example-search-input" style="height:40px;">
-
-                    <div class="col-lg-2"></div>
-                    <i class="fa fa-th-large fa-2x padding-0" ng-click="gridlist();" aria-hidden="true"></i>
-                </div>
-
-                <div class="col-lg-1"></div>
-                <div class="dropdown navbar-right">
-                
-
-                    
-                    <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" ng-src="{{imageurl}}" style="height: 50px; border-radius:50%;float:left; width:75px;"
-                        ng-click="changeClass();">
 
 
-                    <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
-                        <li>
-                            <a ng-click="addImageModal()">Upload on file select</a>
-                          
+            <button type="button" class="hamburger is-closed " data-toggle="offcanvas">
+                <span class="hamb-top"></span>
+                <span class="hamb-middle"></span>
+                <span class="hamb-bottom"></span>
+            </button>
+            <div class="col-lg-1"> </div>
+            <a class="navbar-brand col-lg-1 logo" href="#"></a>
+            <h3 style="height:35px">Keep</h3>
+            <div class="col-lg-1"></div>
+            <div class="input-group col-lg-6 padding-0">
+                <input class="form-control py-2" type="search" value="search" ng-model="search" id="example-search-input" style="height:40px;">
+
+                <div class="col-lg-2"></div>
+                <i class="fa fa-th-large fa-2x padding-0" ng-click="gridlist();" aria-hidden="true"></i>
+            </div>
+
+            <div class="col-lg-1"></div>
+            <div class="dropdown navbar-right">
+
+
+
+                <img class="rounded-circle btn dropdown-toggle" data-toggle="dropdown" ng-src="{{imageurl}}" style="height: 50px; border-radius:50%;float:left; width:75px;"
+                    ng-click="changeClass();">
+
+
+                <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" role="menu" aria-labelledby="menu1">
+                    <li>
+                        <a ng-click="addImageModal()">Upload on file select</a>
+
 
                         <!-- <button ngf-select ng-model="picFile" accept="image/*">
                             Select Picture</button>
@@ -43,14 +44,14 @@
                           <div>
                             <img ng-src="{{croppedDataUrl}}" />
                           </div>
-                          <button ng-click="upload(croppedDataUrl)">Submit</button>--> 
-                        </li>
-                        <li>
-                            <a class="signout" ng-click=logout();>signout</a>
-                        </li>
-                    </ul>
-                </div>
-   
+                          <button ng-click="upload(croppedDataUrl)">Submit</button>-->
+                    </li>
+                    <li>
+                        <a class="signout" ng-click=logout();>signout</a>
+                    </li>
+                </ul>
+            </div>
+
         </nav>
         <div class="overlay"></div>
 
@@ -75,7 +76,13 @@
                     <a ng-click="openLabelModal()">Create new label</a>
                     <div>
                         <div ng-repeat="label in labels ">
-                            <a ng-bind-html="label.label" ng-click="getnotebylabel(label)"> </a>
+                            <div class="row">
+                                
+
+                                <div class="action-label col-md-2" style="margin-top:5%;"></div>
+                                <a ng-bind-html="label.label" ng-click="getnotebylabel(label)"> </a>
+
+                            </div>
                         </div>
                     </div>
                 </li>
@@ -98,13 +105,14 @@
                 <div class="bootcreatenote col-md-12">
                     <div class="create-note container" ng-show="show">
                         <div class="row noteadd" style="margin-left:5%">
-                            <input ng-model="note1.title" type="textbox" style="width: 80%; outline: none;" contentEditable="true" id="addTitle" class="addTitle" placeholder="add a title">
+                            <input ng-model="note1.title" type="textbox" style="width: 80%; outline: none;" contentEditable="true" id="addTitle" class="addTitle"
+                                placeholder="add a title">
                         </div>
                         <hr></hr>
                         <div class="row noteadd editable" style="margin-left:5%">
                             <div role="textbox" style="width: 80%; outline: none;" aria-multiline="true" contentEditable="true" contenteditable="true"
-                             data-placeholder="add a description" id="description">
-                         
+                                data-placeholder="add a description" id="description">
+
 
                             </div>
                             <hr></hr>
@@ -113,13 +121,13 @@
 
                         </div>
                         <footer class="row">
-                           
+
                             <div class="action-buttons action-opencollaborators" data-toggle="tooltip" data-placement="top" title="opencollaborator"
                                 ng-click="opencollaborators(note)">
                             </div>
                             <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
                             <div>
-                                <img class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown" src="{{reminderurl}}"> </img>
+                                <div class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown"> </div>
                                 <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
                                     <li>
                                         <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
@@ -129,15 +137,20 @@
                                     </li>
                                 </ul>
                             </div>
-                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"   data-toggle="tooltip"
+                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)" data-toggle="tooltip"
                                 data-placement="top" title="color"></color-picker>
                             <div class="action-buttons-right-align">
-                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
+                                <div class=" btn action-threedots dropdown-toggle" data-toggle="dropdown" id="trash" ng-click="changeClass1();" style="height:30px">
+                                </div>
                                 <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
-                                    <li><a ng-click="trashNote(note);">trash note
-                                    </a></li>
-                                    <li><a ng-click="addLabeltoNoteModal(note);">add label
-                                    </a></li>
+                                    <li>
+                                        <a ng-click="trashNote(note);">trash note
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="addLabeltoNoteModal(note);">add label
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class='col-md-7'></div>
@@ -156,14 +169,14 @@
 
                 <div class="masonry-grid" style="width:100%">
 
-                        <card ng-repeat="note in Notelist |filter:search| filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}"
+                    <card ng-repeat="note in Notelist |filter:search| filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}"
                         class="card" style="background-color:{{note.color}};" ng-class="class">
                         <img src="http:/localhost/media/{{note.photourl}}" style="height:170px;width:100%">
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
 
                         <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="showdescription"></p>
 
-                        
+
                         <div ng-show="note.ownername!=nameofuser">
                             <p>
                                 <span ng-bind-html="note.ownername"></span>
@@ -181,7 +194,7 @@
 
                                     <span ng-bind-html="label.label"> </span>
 
-                                    <img class="pull-right" src="{{cancelurl}}" value="delete" ng-click="removelabelfromnote(label,note)"></img>
+                                    <div class="pull-right action-cancel" value="delete" ng-click="removelabelfromnote(label,note)"></div>
 
                                 </div>
                             </div>
@@ -205,7 +218,7 @@
                             </div>
                             <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
                             <div>
-                                <img class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown" src="{{reminderurl}}"> </img>
+                                <div class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown"> </div>
                                 <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
                                     <li>
                                         <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
@@ -218,7 +231,8 @@
                             <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)" <div class="btn" data-toggle="tooltip"
                                 data-placement="top" title="color"></color-picker>
                             <div class="action-buttons-right-align">
-                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
+                                <div class=" btn dropdown-toggle action-threedots" data-toggle="dropdown" id="trash" ng-click="changeClass1();" style="height:30px">
+                                </div>
                                 <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
                                     <a ng-click="trashNote(note);">trash note
                                     </a>
@@ -243,13 +257,13 @@
                     <card ng-repeat="note in Notelist |filter:search| filter:{isArchived:'false'}|filter:{isPinned:'false'} | filter:{isTrashed:'false'}"
                         class="card" style="background-color:{{note.color}};" ng-class="class">
                         <div ng-if="note.photourl!=''">
-                        <img src="http://127.0.0.1:8000/media/{{note.photourl}}" style="height:170px;width:100%">
-                    </div>
+                            <img src="http://127.0.0.1:8000/media/{{note.photourl}}" style="height:170px;width:100%">
+                        </div>
                         <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
 
                         <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="showdescription"></p>
 
-                        
+
                         <div ng-show="note.ownername!=nameofuser">
                             <p>
                                 <span ng-bind-html="note.ownername"></span>
@@ -267,7 +281,7 @@
 
                                     <span ng-bind-html="label.label"> </span>
 
-                                    <img class="pull-right" src="{{cancelurl}}" value="delete" ng-click="removelabelfromnote(label,note)"></img>
+                                    <div class="pull-right" value="delete" ng-click="removelabelfromnote(label,note)"></div>
 
                                 </div>
                             </div>
@@ -291,7 +305,7 @@
                             </div>
                             <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
                             <div>
-                                <img class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown" src="{{reminderurl}}"> </img>
+                                <div class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown"> </div>
                                 <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
                                     <li>
                                         <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
@@ -301,15 +315,20 @@
                                     </li>
                                 </ul>
                             </div>
-                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)"   data-toggle="tooltip"
+                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)" data-toggle="tooltip"
                                 data-placement="top" title="color"></color-picker>
                             <div class="action-buttons-right-align">
-                                <img class=" btn dropdown-toggle" data-toggle="dropdown" id="trash" src="{{moreurl}}" ng-click="changeClass1();" style="height:30px"> </img>
+                                <div class=" btn dropdown-toggle action-threedots" data-toggle="dropdown" id="trash" ng-click="changeClass1();" style="height:30px">
+                                </div>
                                 <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
-                                    <li><a ng-click="trashNote(note);">trash note
-                                    </a></li>
-                                    <li><a ng-click="addLabeltoNoteModal(note);">add label
-                                    </a></li>
+                                    <li>
+                                        <a ng-click="trashNote(note);">trash note
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="addLabeltoNoteModal(note);">add label
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </footer>

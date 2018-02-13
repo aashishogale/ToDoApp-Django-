@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.http import Http404, request, HttpResponseRedirect
 from django.shortcuts import render, reverse, render, redirect
 from django.core.exceptions import ObjectDoesNotExist
-from Todo.exceptions import ValueBlankError,TokenError
+from Todo.exceptions import ValueBlankError, TokenError
 from rest_framework import status, generics, serializers, viewsets
 # from rest_framework import status
 from rest_framework.response import Response
@@ -33,7 +33,7 @@ import requests
 
 import logging
 import time
-from django.db.models import OuterRef, Subquery 
+from django.db.models import OuterRef, Subquery
 import json
 # Get an instance of a logger()
 # most_viewed='abcd'
@@ -42,7 +42,7 @@ import json
 # cache.set('news.stories.most_viewed', most_viewed)
 # data = cache.get(['news.stories.most_viewed'])
 # print(data)
-logging.basicConfig( level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
+logging.basicConfig(level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
 
                     datefmt='%Y-%m-%d %H:%M:%S',)
 logger = logging.getLogger(__name__)
@@ -56,6 +56,7 @@ ee = EventEmitter()
 def startlogin(request):
     return render(request, 'Todo/index.html')
 
+
 '''
     Class: UserRegisterView
     Param: generics.CreateAPIView
@@ -63,6 +64,8 @@ def startlogin(request):
 
     def: create Function defination to create the user 
 '''
+
+
 class UserRegisterView(CreateAPIView):
 
     authentication_classes = ()
@@ -71,32 +74,32 @@ class UserRegisterView(CreateAPIView):
 
     @csrf_exempt
     def create(self, request, *args, **kwargs):
-    
+
         try:
-            
+
             serializer = self.get_serializer(data=request.data)
 
-            #validate the user
+            # validate the user
             serializer.is_valid(raise_exception=True)
 
-            #create the user
+            # create the user
             self.perform_create(serializer)
-            
-            #creation of token
+
+            # creation of token
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
             user = serializer.instance
             payload = jwt_payload_handler(user)
             jwttoken = jwt_encode_handler(payload)
-            
-            #send mail
+
+            # send mail
             ee.emit('sendmail', user.email, jwttoken)
             return Response(status=status.HTTP_201_CREATED)
-        except Exception :
-            data=serializer.errors
+        except Exception:
+            data = serializer.errors
 
-            
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
 
 '''
     Class: UserLoginView
@@ -105,6 +108,8 @@ class UserRegisterView(CreateAPIView):
 
     def: create Function defination to login the user 
 '''
+
+
 class UserLoginView(GenericAPIView):
 
     authentication_classes = ()
@@ -116,23 +121,23 @@ class UserLoginView(GenericAPIView):
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            #get serialized user
+            # get serialized user
             user = serializer.user
 
-            #get json token
+            # get json token
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
             payload = jwt_payload_handler(user)
             jwttoken = jwt_encode_handler(payload)
 
-            #set the cache
+            # set the cache
             cache = redis.StrictRedis(host='localhost', decode_responses=True)
             cache.set(jwttoken, user.username)
             # most_viewed='abcd'
             # logger.warning("logged in successfully")
             # cache.set('news.stories.most_viewed', most_viewed)
             # data = cache.get_many(['news.stories.most_viewed'])
-            #set the data for response
+            # set the data for response
             data = {
                 "username": user.username,
                 "id": user.id,
@@ -165,39 +170,39 @@ class UserLoginView(GenericAPIView):
 
     def: get decode the token and check if user exists 
 '''
+
+
 class VerifyToken(GenericAPIView):
     @csrf_exempt
     def get(self, request, *args, **kwargs):
         try:
-          
+
             jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
             jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
             try:
-                #get token from header
+                # get token from header
                 payload = jwt_decode_handler(self.kwargs['token'])
 
-                #check if token is present
-                if payload==None:
+                # check if token is present
+                if payload == None:
                     raise ValueBlankError
-                else:  
+                else:
 
-                    #get username from payload           
+                    # get username from payload
                     username = jwt_get_username_from_payload(payload)
-                   
+
             except ValueBlankError:
 
-                return redirect(settings.REGISTRATION_URL)  
-
-            #update the user
-            User.objects.filter(username=username).update(is_active=True)
-        
-        
-        except ObjectDoesNotExist:
                 return redirect(settings.REGISTRATION_URL)
-        return redirect(settings.HOME_URL)
-    
 
-        
+            # update the user
+            User.objects.filter(username=username).update(is_active=True)
+
+        except ObjectDoesNotExist:
+            return redirect(settings.REGISTRATION_URL)
+        return redirect(settings.HOME_URL)
+
+
 '''
     Class:GenerateOTp
     Param: GenericAPIView
@@ -206,51 +211,51 @@ class VerifyToken(GenericAPIView):
     def: post generate the  otp and send to the user
 '''
 
+
 class GenerateOTP(GenericAPIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         print(request)
         try:
             data = request.data
-            
-            #get email from data
+
+            # get email from data
             useremail = data['email']
-  
-            #check if data and user is present
-            if(data==None or useremail==None):
+
+            # check if data and user is present
+            if(data == None or useremail == None):
                 raise ValueBlankError
         except ValueBlankError:
-            data={
-                "error":"bad request"
+            data = {
+                "error": "bad request"
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
-      
-        try:
-            #check if user with the email is present
-            user = User.objects.get(email=useremail)
-         
-        except ObjectDoesNotExist:
-            data={
-                "error":"invalid user"
-            }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-      
-        #generate the random number
+        try:
+            # check if user with the email is present
+            user = User.objects.get(email=useremail)
+
+        except ObjectDoesNotExist:
+            data = {
+                "error": "invalid user"
+            }
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+        # generate the random number
         randomno = randint(1000, 9999)
 
-        #associate with the user email
+        # associate with the user email
         otp[str(randomno)] = user.email
 
-        #generate jwt token
+        # generate jwt token
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
         payload = jwt_payload_handler(user)
         jwttoken = jwt_encode_handler(payload)
 
-        #send mail
+        # send mail
         email = EmailMessage('Subject', str(randomno),
-                                to=['ashtest1947@gmail.com'])
+                             to=['ashtest1947@gmail.com'])
         email.send()
         return Response(
             # # data=TokenSerializer(token).data,
@@ -266,50 +271,52 @@ class GenerateOTP(GenericAPIView):
 
     def: post check if otp matches the user
 '''
+
+
 class CheckOTP(GenericAPIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            #get randomno from request data
+            # get randomno from request data
             randomno = data['otp']
 
-            if(randomno==None or data==None):
+            if(randomno == None or data == None):
                 raise ValueBlankError
         except ValueBlankError:
-            data={
-                'error':' otp not found please try again'
+            data = {
+                'error': ' otp not found please try again'
             }
         try:
 
-            #get useremail from otp 
+            # get useremail from otp
             useremail = otp[str(randomno)]
-        
-    
-            if(useremail==None):
+
+            if(useremail == None):
                 raise ValueBlankError
             else:
-                #get user with email
+                # get user with email
                 user = User.objects.get(email=useremail)
 
         except ObjectDoesNotExist:
-            data={
-                "error":"invalid user"
+            data = {
+                "error": "invalid user"
             }
 
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         except ValueBlankError:
-            data={
-               "error":"invalid otp"
+            data = {
+                "error": "invalid otp"
             }
 
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(
-        
+
             status=status.HTTP_200_OK
         )
+
 
 '''
     Class:UserLogout
@@ -319,26 +326,29 @@ class CheckOTP(GenericAPIView):
     def: get logout the user
 '''
 
+
 class UserLogoutView(GenericAPIView):
     @csrf_exempt
     def get(self, request, *args, **kwargs):
         try:
-            #get token from request header
+            # get token from request header
             jwttoken = request.META.get('HTTP_TOKEN')
 
-            if(jwttoken==None):
+            if(jwttoken == None):
                 raise ValueBlankError
             else:
-                #deletefrom cache
-                cache = redis.StrictRedis(host='localhost', decode_responses=True)
+                # deletefrom cache
+                cache = redis.StrictRedis(
+                    host='localhost', decode_responses=True)
                 cache.delete(jwttoken)
 
         except ValueBlankError:
-            data={
-                'error':'invalid token found'
+            data = {
+                'error': 'invalid token found'
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
-        return Response( status=status.HTTP_200_OK )
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
+
 
 '''
     Class:Change Password
@@ -347,84 +357,89 @@ class UserLogoutView(GenericAPIView):
 
     def: post Change password
 '''
+
+
 class ChangePassword(GenericAPIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         try:
             print(request.META.get('HTTP_TOKEN'))
-            
+
             data = request.data
 
-            #get password from request
+            # get password from request
             password = data['password']
 
-            #check if password id present
-            if(password==None):
+            # check if password id present
+            if(password == None):
 
-                raise ValueBlankError 
+                raise ValueBlankError
 
         except ValueBlankError:
-            data={
-                'error':'invalid request'
-            } 
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST) 
+            data = {
+                'error': 'invalid request'
+            }
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-        try:  
+        try:
 
-            #perform jwt token decoding
+            # perform jwt token decoding
             jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
             jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
             payload = jwt_decode_handler(request.META.get('HTTP_TOKEN'))
 
-            #check if payload exists
-            if(payload==None):
+            # check if payload exists
+            if(payload == None):
 
                 raise TokenError
         except TokenError:
 
-            data={
-                'error':'token expired please try again'
+            data = {
+                'error': 'token expired please try again'
             }
 
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-        try:    #get user from payload
+        try:  # get user from payload
             username = jwt_get_username_from_payload(payload)
-            
-            if(username==None):
+
+            if(username == None):
                 raise ValueBlankError
         except ValueBlankError:
 
-            data={
-                'error':'token expired please try again'
+            data = {
+                'error': 'token expired please try again'
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            #check if the user exists
+            # check if the user exists
             user = User.objects.get(username=username)
 
         except ObjectDoesNotExist:
-            data={
-                'error':'invalid user'
+            data = {
+                'error': 'invalid user'
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-        #update the password  
+        # update the password
         User.objects.filter(username=username).update(password=password)
 
         return Response(
-         
+
             status=status.HTTP_200_OK
         )
+
 
 '''
         def: send the mail
         filter: Default filter by logged in user.
 '''
+
+
 @ee.on('sendmail')
 def sendmail(useremail, jwttoken):
-   
+
     request = None
     from django.core.mail import EmailMessage
 
@@ -447,26 +462,29 @@ def sendmail(useremail, jwttoken):
 
     def: get_queryset Function defination to build the query 
 '''
+
+
 class NoteList(generics.ListAPIView):
-    # Serializer Notes class 
+    # Serializer Notes class
     serializer_class = NoteSerializer
 
     '''
         def: Function to retrive the list of notes from the Notes model
         filter: Default filter by logged in user.
     '''
+
     def get_queryset(self):
         response_data = {}
         response_data['success'] = False
-        response_data['message'] = "Something bad happened. Please try again." 
-        response=[]
+        response_data['message'] = "Something bad happened. Please try again."
+        response = []
 
-        # Retrive the logged in user id from the 
+        # Retrive the logged in user id from the
         user_id = self.request.META.get('HTTP_ID')
 
         # Get the logged in User Object
         try:
-            user = User.objects.get( id = user_id)
+            user = User.objects.get(id=user_id)
         except ObjectDoesNotExist:
 
             logger.warning('Warning: No user_id:%d  %sn', user_id,  str(e))
@@ -482,7 +500,8 @@ class NoteList(generics.ListAPIView):
 
         # Get the Notes corresponing to the user & order by latest
         try:
-            queryset = Notes.objects.filter( owner = user ).order_by('-last_modified')[:100]
+            queryset = Notes.objects.filter(
+                owner=user).order_by('-last_modified')[:100]
         except ObjectDoesNotExist:
             queryset = None
 
@@ -496,9 +515,9 @@ class NoteList(generics.ListAPIView):
 
         final_queryset = list(chain(queryset2, queryset))
         return final_queryset
-        
+
         # if queryset2 and  queryset:
-        #    
+        #
         #     response_data['data'] = final_queryset
         # else:
         #     response_data['data'] = []
@@ -513,9 +532,11 @@ class NoteList(generics.ListAPIView):
  
 '''
 
+
 class CreateNote(generics.CreateAPIView):
     print("inside create")
     serializer_class = NoteSerializer
+
 
 '''
     Class: NoteDetail
@@ -524,6 +545,8 @@ class CreateNote(generics.CreateAPIView):
 
  
 '''
+
+
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Notes.objects.all()
     serializer_class = NoteSerializer
@@ -536,9 +559,12 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
 
  
 '''
+
+
 class CreateProfile(generics.UpdateAPIView):
 
     serializer_class = NoteSerializer
+
 
 '''
     Class: CreateListCollaborator
@@ -547,27 +573,29 @@ class CreateProfile(generics.UpdateAPIView):
 
  
 '''
+
+
 class CreateListCollaborator(generics.ListCreateAPIView):
     serializer_class = CollaboratorSerializer
 
     def get_queryset(self):
         try:
             id = self.request.META.get('HTTP_NOTEID')
-            if(id==None):
+            if(id == None):
                 raise ValueBlankError
         except ValueBlankError:
-            data={
-                'data':'note does not exist'
+            data = {
+                'data': 'note does not exist'
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             queryset = Collaborator.objects.filter(note=id)
         except ObjectDoesNotExist:
             return queryset
 
-        
         return queryset
+
 
 '''
     Class: CollaboratorDetail
@@ -576,9 +604,12 @@ class CreateListCollaborator(generics.ListCreateAPIView):
 
  
 '''
+
+
 class CollaboratorDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Collaborator.objects.all()
     serializer_class = CollaboratorSerializer
+
 
 '''
     Class:Delete Colloborator
@@ -587,35 +618,38 @@ class CollaboratorDetail(generics.RetrieveUpdateDestroyAPIView):
 
  
 '''
+
+
 class DeleteCollaborator(GenericAPIView):
     def get(self, request, *args, **kwargs):
         try:
-            #get query parameters
+            # get query parameters
             owner = kwargs['owner']
             note = kwargs['note']
             shareduser = kwargs['shareduser']
 
-            #check if not none
-            if(owner==None or note==None or shareduser==None):
+            # check if not none
+            if(owner == None or note == None or shareduser == None):
                 raise ValueBlankError
         except ValueBlankError:
-            data={
-                'error':'request error'
+            data = {
+                'error': 'request error'
 
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         try:
-            #get collaborator
+            # get collaborator
             collab = Collaborator.objects.get(
                 owner=owner, note=note, shareduser=shareduser)
-                
+
             collab.delete()
         except ObjectDoesNotExist:
-            data={
-                'error':'object not found'
+            data = {
+                'error': 'object not found'
             }
         logger.warning("deleted")
         return Response(status=status.HTTP_200_OK)
+
 
 '''
     Class:GetUserView
@@ -624,9 +658,12 @@ class DeleteCollaborator(GenericAPIView):
 
  
 '''
+
+
 class GetUserView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
 
 '''
     Class:GetUserByUserName
@@ -635,6 +672,8 @@ class GetUserView(generics.RetrieveAPIView):
 
  
 '''
+
+
 class GetUserByUserName(generics.RetrieveAPIView):
 
     lookup_field = 'username'
@@ -647,23 +686,23 @@ class AddImage(GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             owner = request.data["owner"]
-            if(owner==None):
+            if(owner == None):
                 raise ValueBlankError
         except ValueBlankError:
-                data={
-                    'error':'bad request'
-                }
-                return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            data = {
+                'error': 'bad request'
+            }
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         try:
-        
-             profile = Profile.objects.get(owner=owner)
+
+            profile = Profile.objects.get(owner=owner)
         except ObjectDoesNotExist:
-                 data={
-                     'error':'user does not exist'
-                 }
+            data = {
+                'error': 'user does not exist'
+            }
 
         import base64
-     
+
         imgdata = base64.b64decode(request.data['file'])
         # filename = request.data['filename']  # I assume you have a way of picking unique filenames
         # with open(filename, 'wb') as f:
@@ -673,8 +712,7 @@ class AddImage(GenericAPIView):
         profile.photo = ContentFile(imgdata, request.data['filename'])
         logger.warning(profile.photo)
         profile.save()
-        
-      
+
         return Response(status=status.HTTP_200_OK)
 
 
@@ -684,14 +722,14 @@ class GetImage(GenericAPIView):
         try:
             owner = kwargs['owner']
         except ValueBlankError:
-                data={
-                    'error':'user does not exist'
-                }
+            data = {
+                'error': 'user does not exist'
+            }
         try:
             profile = Profile.objects.get(owner=owner)
         except ObjectDoesNotExist:
-            data={
-                'error':'user does not exist'
+            data = {
+                'error': 'user does not exist'
             }
         logger.warning("image retrieved successfully")
 
@@ -708,18 +746,18 @@ class LabelCreate(GenericAPIView):
             label = request.data['label']
 
             id = self.request.META.get('HTTP_ID')
-            if(id==None or label==None):
+            if(id == None or label == None):
                 raise ValueBlankError
         except ValueBlankError:
-            data={
-                'error':'bad request'
+            data = {
+                'error': 'bad request'
             }
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         try:
             user = User.objects.get(id=id)
         except ObjectDoesNotExist:
-            data={
-                'error':'user does not exist'
+            data = {
+                'error': 'user does not exist'
             }
         label = Labels.objects.create(owner=user, label=label)
         label.save()
@@ -728,7 +766,7 @@ class LabelCreate(GenericAPIView):
 
 class AddNoteToLabel(GenericAPIView):
     def post(self, request, *args, **kwargs):
-        
+
         noteid = kwargs['note']
         note = Notes.objects.get(id=noteid)
         labelid = kwargs['label']
@@ -744,11 +782,11 @@ class GetAllLabels(generics.ListCreateAPIView):
     def get_queryset(self):
         try:
             id = self.request.META.get('HTTP_ID')
-           
+
             user = User.objects.get(id=id)
         except ObjectDoesNotExist:
-            data=[{
-                'error':'user does not exist'
+            data = [{
+                'error': 'user does not exist'
             }]
             return data
 
@@ -763,15 +801,14 @@ class GetAllLabelsFromNote(generics.ListCreateAPIView):
         try:
             id = self.kwargs['noteid']
 
-            if(id==None):
+            if(id == None):
                 raise ValueBlankError
 
         except ValueBlankError:
-            data=[{
-                "error":"invalid request please try again"
+            data = [{
+                "error": "invalid request please try again"
             }]
             return data
-      
 
         labels = Labels.objects.filter(notelabel__id=id)
 
@@ -784,40 +821,44 @@ class GetCollabFromNote(generics.ListAPIView):
     def get_queryset(self):
         try:
             noteid = self.kwargs['note']
-            if(noteid==None):
+            if(noteid == None):
                 raise ValueBlankError
         except ValueBlankError:
-            data=[{
-                'error':'invalid request'
+            data = [{
+                'error': 'invalid request'
             }]
             return data
         try:
-          
+
             id = self.request.META.get('HTTP_ID')
             print("this is id", id)
             note = Notes.objects.get(id=noteid)
         except ObjectDoesNotExist:
-            data=[{
-                'error':'note does not exist'
+            data = [{
+                'error': 'note does not exist'
             }]
             return data
         try:
-            collab = Collaborator.objects.filter(note=note).values('shareduser')
+            collab = Collaborator.objects.filter(
+                note=note).values('shareduser')
         except ObjectDoesNotExist:
-            data=[]
+            data = []
             return data
-           
+
             # print(collab)
         user = User.objects.all().filter(id__in=Subquery(collab))
-        
+
         return user
 
+
 class GetNotesFromLabel(generics.ListAPIView):
-     serializer_class=NoteSerializer
-     def get_queryset(self):
-        labelid=self.kwargs["labelid"]
-        labelednotes=Notes.objects.filter(label=labelid)
+    serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        labelid = self.kwargs["labelid"]
+        labelednotes = Notes.objects.filter(label=labelid)
         return labelednotes
+
 
 class AddImageToNote(GenericAPIView):
 
@@ -825,30 +866,29 @@ class AddImageToNote(GenericAPIView):
         print("inside here")
         try:
             noteid = request.data["note"]
-            print("note id",noteid)
-            if(noteid==None):
+            print("note id", noteid)
+            if(noteid == None):
                 raise ValueBlankError
         except ValueBlankError:
-                data={
-                    'error':'bad request'
-                }
-                return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+            data = {
+                'error': 'bad request'
+            }
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
         try:
-        
-             note = Notes.objects.get(id=noteid)
-        except ObjectDoesNotExist:
-                 data={
-                     'error':'user does not exist'
-                 }
 
-  
+            note = Notes.objects.get(id=noteid)
+        except ObjectDoesNotExist:
+            data = {
+                'error': 'user does not exist'
+            }
+
         note.photo = request.data["file"]
         print(note.photo)
-        note.photourl=note.photo
+        note.photourl = note.photo
         note.save()
-        
-      
+
         return Response(status=status.HTTP_200_OK)
+
 
 class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Labels.objects.all()
@@ -856,23 +896,25 @@ class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class NotePhotoDelete(GenericAPIView):
-    def  post(self,request,*args,**kwargs):
-        noteid=kwargs['noteid']
-        note=Notes.objects.get(id=noteid)
-        note.photourl=''
+    def post(self, request, *args, **kwargs):
+        noteid = kwargs['noteid']
+        note = Notes.objects.get(id=noteid)
+        note.photourl = ''
         note.photo.delete(save=true)
         return Response(status=status.HTTP_200_OK)
 
+
 class FacebookLogin(GenericAPIView):
-     serializer_class = UserSerializer
-     def post(self,request,*args,**kwargs):
-    
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        print('here', request.data.get('clientId'))
         access_token_url = 'https://graph.facebook.com/v2.3/oauth/access_token'
         graph_api_url = 'https://graph.facebook.com/v2.3/me?fields=id,name,email'
-
+      
         params = {
-             'client_id': request.data.get('clientId'),
-             'redirect_uri': request.data.get('redirectUri'),
+                   'client_id': request.data.get('clientId'),
+        'redirect_uri': request.data.get('redirectUri'),
              'client_secret': settings.FACEBOOK_SECRET,
              'code': request.data.get('code'),
              'scope':'email'
@@ -883,7 +925,7 @@ class FacebookLogin(GenericAPIView):
         logger.warning("r.text")
         logger.warning(r.text)
         #access_token = dict(parse_qsl(r.text))["access_token"]
-        dicto=json.loads(r.text)
+        dicto = json.loads(r.text)
         print("this is dictotoken")
         print(dicto['access_token'])
         logger.warning("this is accesstoken")
@@ -894,27 +936,94 @@ class FacebookLogin(GenericAPIView):
         randomno = randint(10000, 99999)
         try:
             print(profile['email'])
-            user=User.objects.get(email=profile['email'])
+            user = User.objects.get(email=profile['email'])
         except ObjectDoesNotExist:
-                 user = User.objects.create(email=profile['email'],username=profile['name'])
-                 user.save()
-      
+            user = User.objects.create(
+                email=profile['email'], username=profile['name'])
+            user.save()
+            profile = Profile.objects.create(owner=user)
+            profile.save()
+
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-      
+
         payload = jwt_payload_handler(user)
         jwttoken = jwt_encode_handler(payload)
-     
-        data={
-             
+
+        data = {
+
+            "username": user.username,
+            "id": user.id,
+            "token": jwttoken
+
+
+        }
+        cache = redis.StrictRedis(host='localhost', decode_responses=True)
+        cache.set(jwttoken, user.username)
+       
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class GoogleLogin(GenericAPIView):
+        serializer_class = UserSerializer
+      
+        def post(self, request, *args, **kwargs):
+            logger.warning("inside google")
+            access_token_url = 'https://accounts.google.com/o/oauth2/token'
+            people_api_url = 'https://www.googleapis.com/plus/v1/people/me'
+            print(settings.REDIRECT_URI_GOOGLE)
+            payload = {
+                         'client_id':settings.GOOGLE_CLIENT_ID,
+                        'redirect_uri':settings.REDIRECT_URI_GOOGLE,
+                        'client_secret':settings.GOOGLE_SECRET,
+                        'code':request.data.get('code'),
+                         'scope':'profile',
+                         'grant_type':'authorization_code',
+                         }
+            print(payload)
+            r = requests.post(access_token_url, data=payload)
+            print(r.text)
+            token = json.loads(r.text)
+            print("access token",token)
+            headers = {'Authorization': 'Bearer {0}'.format(token['access_token'])}
+
+            r = requests.get(people_api_url, headers=headers)
+            profile = json.loads(r.text)
+            print(profile)
+            username=profile['displayName']
+            emails=profile['emails']
+            for item in emails:
+                email= item['value']
+            
+            randomno = randint(10000, 99999)
+            try:
+              
+                user = User.objects.get(email=email)
+            except ObjectDoesNotExist:
+                user = User.objects.create(
+                    email=email, username=username)
+                profile = Profile.objects.create(owner=user)
+                profile.save()
+                user.save()
+
+            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+            payload = jwt_payload_handler(user)
+            jwttoken = jwt_encode_handler(payload)
+
+            data = {
+
                 "username": user.username,
                 "id": user.id,
                 "token": jwttoken
 
+
+            }
+            cache = redis.StrictRedis(host='localhost', decode_responses=True)
+            cache.set(jwttoken, user.username)
             
-        }
-        cache = redis.StrictRedis(host='localhost', decode_responses=True)
-        cache.set(jwttoken, user.username)
-        profile = Profile.objects.create(owner=user)
-        profile.save()
-        return Response(data=data,status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
+                
+            
+               

@@ -80,6 +80,7 @@ toDo.controller('homeController', function ($scope, restService,
 		note.collab={}
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
+			toastr.success('color changed')
 			$state.reload();
 		})
 
@@ -260,6 +261,7 @@ toDo.controller('homeController', function ($scope, restService,
 		var service2 = restService.service('GET', url);
 		service2.then(function (response) {
 			$state.reload()
+			toastr.success('deleted successfully')
 			console.log("deleted successfully")
 		})
 	}
@@ -267,6 +269,7 @@ toDo.controller('homeController', function ($scope, restService,
 		console.log(collaborator)
 		var service2 = restService.service('POST', "collaborator", collaborator);
 		service2.then(function (response) {
+			toastr.success("collab added successfully")
 			console.log("collab added successfully")
 			$state.reload();
 		})
@@ -283,6 +286,7 @@ toDo.controller('homeController', function ($scope, restService,
 		console.log($scope.note)
 		var service = restService.service('POST', 'createnote', $scope.note1);
 		service.then(function (response) {
+			toastr.success("Note Added Successfully")
 			$scope.note1 = {};
 			$state.reload();
 		})
@@ -339,9 +343,18 @@ toDo.controller('homeController', function ($scope, restService,
 						console.log("reminderdate"
 							+ reminderdate);
 						if (reminderdate === currentDate) {
-							console.log("toaster exeute");
-							toastr.success($scope.Notelist[i].title, 'Reminder');
-							return
+							// console.log("toaster exeute");
+							// toastr.success($scope.Notelist[i].title, 'Reminder');
+							    Push.Permission.GRANTED;
+								Push.create("reminder", {
+									body: $scope.Notelist[i].title,
+									icon:$scope.imageurl,
+									timeout: 4000,
+									onClick: function () {
+										window.focus();
+										this.close();
+									}
+								});
 
 						}
 					}
@@ -373,6 +386,8 @@ toDo.controller('homeController', function ($scope, restService,
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
 			$state.reload();
+			toastr.success("Note Edited Successfully")
+
 		})
 
 	}
@@ -381,9 +396,13 @@ toDo.controller('homeController', function ($scope, restService,
 		console.log(note)
 		note.collab={}
 		note.labelString={}
+		note.isTrashed=false
+		note.isPinned=false
 		var url = "note/" + note.id
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
+			toastr.success("Note Archived Successfully")
+
 			$state.reload();
 		})
 	}
@@ -391,12 +410,16 @@ toDo.controller('homeController', function ($scope, restService,
 		note.isPinned = !note.isPinned
 		note.collab={}
 		note.labelString={}
+		note.isArchived=false
+		note.isTrashed=false
 		var file = new File([note.photo], "note.photourl");
 		$scope.file;
 		var url = "note/" + note.id
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
 			$state.reload();
+			toastr.success("Note Pinned Successfully")
+
 		})
 	
 	}
@@ -408,10 +431,14 @@ toDo.controller('homeController', function ($scope, restService,
 		note.isTrashed = !note.isTrashed
 		note.collab={}
 		note.labelString={}
+		note.isArchived=false
+		note.isPinned=false
 		var url = "note/" + note.id
 		var service = restService.service('PUT', url, note);
 		service.then(function (response) {
 			$state.reload();
+			toastr.success("Note Trashed Successfully")
+
 		})
 	}
 
@@ -654,6 +681,8 @@ toDo.controller('homeController', function ($scope, restService,
 		service.then(function (response) {
 			console.log("label added successfully")
 			$state.reload()
+			toastr.success("Label Added Successfully")
+
 		})
 
 	}
@@ -719,6 +748,8 @@ toDo.controller('homeController', function ($scope, restService,
 	  service.then(function(response){
 		  toastr.success("label deleted")
 		  $state.reload()
+		  toastr.success("Label deleted Successfully")
+
 	  })
 		
 	}

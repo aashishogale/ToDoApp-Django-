@@ -26,6 +26,7 @@ toDo.factory('restService', function($http, $location) {
 		}
 		else
 		{
+			console.log("post")
 			httpobj.data=data;
 			
 		}

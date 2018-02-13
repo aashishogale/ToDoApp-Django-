@@ -32,6 +32,8 @@ urlpatterns=[
     path('deletelabel/<str:pk>',views.  LabelDetail.as_view(),name='deletelabel'),
     path('deleteimage/<str:noteid>',views.  LabelDetail.as_view(),name='deleteimage'),
     path('authfacebook',views. FacebookLogin .as_view(),name='authfacebook'),
+    path('authgoogle',views. GoogleLogin .as_view(),name='authgoogle'),
+
     ]
 
 
