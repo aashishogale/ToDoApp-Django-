@@ -30,18 +30,12 @@ from itertools import chain
 from urllib.parse import parse_qsl
 from django.conf import settings
 import requests
-
+from Todo.tasks import sendmail 
 import logging
 import time
 from django.db.models import OuterRef, Subquery
 import json
-# Get an instance of a logger()
-# most_viewed='abcd'
-# #logger.warning("logged in successfully")
-# #cache = redis.StrictRedis(host='localhost', decode_responses=True)
-# cache.set('news.stories.most_viewed', most_viewed)
-# data = cache.get(['news.stories.most_viewed'])
-# print(data)
+from celery.app.task import Task
 logging.basicConfig(level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
 
                     datefmt='%Y-%m-%d %H:%M:%S',)
@@ -84,21 +78,24 @@ class UserRegisterView(CreateAPIView):
 
             # create the user
             self.perform_create(serializer)
-
-            # creation of token
-            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-            user = serializer.instance
-            payload = jwt_payload_handler(user)
-            jwttoken = jwt_encode_handler(payload)
-
-            # send mail
-            ee.emit('sendmail', user.email, jwttoken)
-            return Response(status=status.HTTP_201_CREATED)
         except Exception:
             data = serializer.errors
 
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            # creation of token
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        user = serializer.instance
+        
+        payload = jwt_payload_handler(user)
+        jwttoken = jwt_encode_handler(payload)
+
+        # send mail
+        #ee.emit('sendmail', user.email, jwttoken)
+        logger.warning("user saved")
+        sendmail.delay(user.email,jwttoken) #.apply_async()
+        return Response(status=status.HTTP_201_CREATED)
+      
 
 
 '''
@@ -210,8 +207,6 @@ class VerifyToken(GenericAPIView):
 
     def: post generate the  otp and send to the user
 '''
-
-
 class GenerateOTP(GenericAPIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
@@ -271,8 +266,6 @@ class GenerateOTP(GenericAPIView):
 
     def: post check if otp matches the user
 '''
-
-
 class CheckOTP(GenericAPIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
@@ -325,8 +318,6 @@ class CheckOTP(GenericAPIView):
 
     def: get logout the user
 '''
-
-
 class UserLogoutView(GenericAPIView):
     @csrf_exempt
     def get(self, request, *args, **kwargs):
@@ -357,8 +348,6 @@ class UserLogoutView(GenericAPIView):
 
     def: post Change password
 '''
-
-
 class ChangePassword(GenericAPIView):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
@@ -437,22 +426,22 @@ class ChangePassword(GenericAPIView):
 '''
 
 
-@ee.on('sendmail')
-def sendmail(useremail, jwttoken):
+# @ee.on('sendmail')
+# def sendmail(useremail, jwttoken):
+#     print('1')
+#     request = None
+#     from django.core.mail import EmailMessage
 
-    request = None
-    from django.core.mail import EmailMessage
+#     url = settings.BASE_URL + \
+#         reverse('todo:verifytoken', args=[jwttoken])
+#     # http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
+#     message = 'Dear User, </br> Please verify your email by clicking on the below link ' + \
+#         url + ' </br></br> Thank you, </br> Todo Team'
+#     email = EmailMessage('Subject', message, to=['ashtest1947@gmail.com'])
+#     email.send()
 
-    url = settings.BASE_URL + \
-        reverse('todo:verifytoken', args=[jwttoken])
-    # http://127.0.0.1:8000/ToDoApp/verifytoken/'+jwttoken
-    message = 'Dear User, </br> Please verify your email by clicking on the below link ' + \
-        url + ' </br></br> Thank you, </br> Todo Team'
-    email = EmailMessage('Subject', message, to=['ashtest1947@gmail.com'])
-    email.send()
-
-    print(url)
-    return
+#     print(url)
+#     return
 
 
 '''

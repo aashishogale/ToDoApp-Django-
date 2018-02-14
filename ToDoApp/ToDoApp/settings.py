@@ -41,12 +41,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'django.contrib.sites',
     'social_django',
+ 
     # 'rest_framework.authtoken',
     'Todo',
 
 
 ]
 
+#INSTALLED_APPS += ("djcelery_email",)
 SITE_ID = 1
 
 
@@ -148,7 +150,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CELERY_BROKER_URL = 'amqp://localhost'
+# CELERY_BROKER_URL = 'amqp://localhost'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -196,8 +198,9 @@ SOCIAL_AUTH_PIPELINE = (
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 EMAIL_USE_TLS = True
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -205,13 +208,14 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 
 # Must generate specific password for your app in [gmail settings][1]
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD ')
 
+EMAIL_HOST_PASSWORD = os.getenv('GMAIL_HOST_PASSWORD')
+print("this is",EMAIL_HOST_PASSWORD)
 EMAIL_PORT = 587
-
+SERVER_EMAIL = os.getenv('EMAIL_HOST_USER')
 # This did the trick
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+print(DEFAULT_FROM_EMAIL)
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -248,15 +252,19 @@ LOGGING = {
         },
     },
 }
+
 GOOGLE_SECRET=os.getenv('GOOGLE_SECRET')
 FACEBOOK_SECRET=os.getenv('FACEBOOK_SECRET')
 FACEBOOK_CLIENT_ID=os.getenv('FACEBOOK_CLIENT_ID')
 GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID')
 REDIRECT_URI_GOOGLE=os.getenv('REDIRECT_URI')
 REDIRECT_URI_FACEBOOK=os.getenv('REDIRECT_URI_FACEBOOK')
+
+CELERY_IMPORTS=("Todo.tasks")
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-BASE_URL='http://localhost'
+BASE_URL='http://localhost:8000'
 REGISTRATION_URL=BASE_URL+'/ToDoApp/#!/register'
 HOME_URL=BASE_URL+'/ToDoApp/'
 STATIC_URL = '/static/'
