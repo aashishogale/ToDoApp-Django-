@@ -1,4 +1,5 @@
-<button ngf-select ng-model="picFile" accept="image/*">
+
+<div class="animated slideInUp"><button ngf-select ng-model="picFile" accept="image/*">
     Select Picture</button>
   <div ngf-drop ng-model="picFile" ngf-pattern="image/*"
        class="cropArea">
@@ -9,4 +10,4 @@
   <div>
     <img ng-src="{{croppedDataUrl}}" />
   </div>
-  <button ng-click="upload(croppedDataUrl,picFile.name)">Submit</button> 
+  <button ng-click="upload(croppedDataUrl,picFile.name)">Submit</button> </div>

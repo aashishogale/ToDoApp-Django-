@@ -2,6 +2,9 @@ from celery import shared_task, task
 from django.conf import settings
 from django.shortcuts import reverse
 import logging
+from .models import Notes
+from django.contrib.auth.models import User
+
 logging.basicConfig(level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
 
                     datefmt='%Y-%m-%d %H:%M:%S',)
@@ -48,3 +51,23 @@ def sendmail(useremail, jwttoken):
 @shared_task
 def print2():
     print("enter")
+    
+# user=User.objects.all()
+
+@shared_task
+def deleteArchivedNotes():
+    logger.warning("archived notes entered")
+    # users=User.objects.all()
+    # user = ''
+    # for user1 in users:
+    #     user = user1.username
+    #     print(user1.username)
+    logger.warning("users got")
+    notes=Notes.objects.all()
+    logger.info("notes gotten")
+    for note in notes:
+        if(note.isArchived==False):
+            note.delete()
+            logger.warning("notes deleted successfully")
+
+    return True

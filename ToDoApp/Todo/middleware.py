@@ -15,11 +15,11 @@ class JWTAuthenticationMiddleware:
     def process_view(self, request, view_func, view_args, view_kwargs):
         # print("inside middleware")
         current_url = resolve(request.path_info).url_name
-        # print(current_url)
+        print(current_url)
         jwttoken=request.META.get('HTTP_TOKEN')
         # print("hello")
         # print(jwttoken)
-        if current_url=='userlogin' or current_url==None or  current_url=='userregister' or current_url=='startlogin' or current_url=='verifytoken' or current_url=='addimage' or current_url=='getimage' or current_url=='generateOTP' or current_url=='checkOTP' or current_url=='changepassword' or current_url=='addimagetonote'or current_url=='authfacebook' or current_url=='authgoogle':
+        if current_url=='userlogin' or current_url==None or  current_url=='userregister' or current_url=='startlogin' or current_url=='verifytoken' or current_url=='addimage' or current_url=='getimage' or current_url=='generateOTP' or current_url=='checkOTP' or current_url=='changepassword' or current_url=='addimagetonote'or current_url=='authfacebook' or current_url=='authgoogle'or current_url=='admin':
             print("allowed becaouse of url")
             return None
         # print(jwttoken)

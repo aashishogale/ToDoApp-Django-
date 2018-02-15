@@ -41,14 +41,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'django.contrib.sites',
     'social_django',
- 
+ 'django_celery_results',
     # 'rest_framework.authtoken',
     'Todo',
 
 
 ]
+# CELERY_BROKER_TRANSPORT = "djkombu.transport.DatabaseTransport"
 
-#INSTALLED_APPS += ("djcelery_email",)
+# INSTALLED_APPS += ('djkombu',)
 SITE_ID = 1
 
 
@@ -262,6 +263,10 @@ REDIRECT_URI_FACEBOOK=os.getenv('REDIRECT_URI_FACEBOOK')
 
 CELERY_IMPORTS=("Todo.tasks")
 
+CELERY_BROKER_HOST=os.getenv('CELERY_RESULT_BACKEND')
+#CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+CELERY_ALWAYS_EAGER=True
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 BASE_URL='http://localhost:8000'
@@ -274,3 +279,5 @@ MEDIA_URL = '/media/'
 # print(os.path.join(BASE_DIR, '/media/'))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+import djcelery
+djcelery.setup_loader()

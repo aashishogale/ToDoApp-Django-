@@ -36,6 +36,7 @@ import time
 from django.db.models import OuterRef, Subquery
 import json
 from celery.app.task import Task
+from celery import shared_task, task
 logging.basicConfig(level=logging.DEBUG,   format='%(asctime)s %(levelname)-8s %(message)s',
 
                     datefmt='%Y-%m-%d %H:%M:%S',)
@@ -412,8 +413,9 @@ class ChangePassword(GenericAPIView):
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
         # update the password
-        User.objects.filter(username=username).update(password=password)
-
+        #User.objects.filter(username=username).update(password=password)
+        user.set_password(password)
+        user.save()
         return Response(
 
             status=status.HTTP_200_OK
@@ -1015,4 +1017,20 @@ class GoogleLogin(GenericAPIView):
             return Response(data=data, status=status.HTTP_200_OK)
                 
             
-               
+@shared_task
+def deleteArchivedNotes():
+    logger.warning("archived notes entered")
+    # users=User.objects.all()
+    # user = ''
+    # for user1 in users:
+    #     user = user1.username
+    #     print(user1.username)
+    logger.warning("users got")
+    notes=Notes.objects.all()
+    logger.info("notes gotten")
+    for note in notes:
+        if(note.isArchived==False):
+            note.delete()
+            logger.warning("notes deleted successfully")
+
+    return True           

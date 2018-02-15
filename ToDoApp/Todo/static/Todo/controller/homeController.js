@@ -66,6 +66,31 @@ toDo.controller('homeController', function ($scope, restService,
 			localStorage.setItem("archiveGrid", "list")
 		}
 	}
+
+	$scope.class2 = localStorage.getItem("trashGrid");
+	$scope.archivegridlist = function () {
+ 
+
+
+		if ($scope.class2 == 'list') {
+			//$scope.width="32%"
+			$scope.class2 = 'grid'
+
+			//$('.card').css("width", "32%");
+			//$scope.isGrid = false;
+			localStorage.setItem("trashGrid", "grid")
+		} else {
+
+			//$scope.width="100%"
+			$scope.class2 = 'list'
+
+
+
+			//$('.card').css("width", "100%");
+			//$scope.isGrid = true;
+			localStorage.setItem("trashGrid", "list")
+		}
+	}
 	$scope.options = ['#FFFFFF', '#FF8A80', '#FFD180', '#FFFF8D', '#CFD8DC', '#80D8FF', '#A7FFEB', '#CCFF90'];
 	$scope.Notelist = [];
 	$scope.pinned = '';
@@ -277,7 +302,17 @@ toDo.controller('homeController', function ($scope, restService,
 
 	//getallnotes();
 	$scope.addnote = {}
+$scope.deleteNote =function(note){
+	var url = "note/" + note.id	
+	console.log(note)
+		var service = restService.service('DELETE', url, note);
+		service.then(function (response) {
+			$state.reload();
+			toastr.success("Note deleted Successfully")
 
+		})
+	
+}
 	$scope.createNote = function (addnote) {
 		$scope.note1.ownername = localStorage.getItem("name")
 		$scope.note1.owner = localStorage.getItem("id")
@@ -449,7 +484,7 @@ toDo.controller('homeController', function ($scope, restService,
 		$scope.$modalInstance = $uibModal.open({
 			templateUrl: '/static/Todo/templates/EditNote.html',
 			scope: $scope,
-
+			windowClass: 'modal modal-slide-in-right',
 
 
 

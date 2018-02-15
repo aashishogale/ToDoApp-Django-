@@ -1,3 +1,6 @@
+
+
+
 .padding-0{
   padding-right:0;
   padding-left:0;
@@ -582,3 +585,23 @@ a:hover{
 #description:focus{
   content:'';
 }
+
+.modal.modal-slide-in-right .modal-content {
+  opacity: 0;
+  -webkit-transform: translate(20%, 0%);
+  -ms-transform: translate(20%, 0%);
+  -o-transform: translate(20%, 0%);
+  transform: translate(20%, 0%);
+  -webkit-transition: all .3s cubic-bezier(.25, .5, .5, .9) 1s;
+  -o-transition: all .3s cubic-bezier(.25, .5, .5, .9) 1s;
+  transition: all .3s cubic-bezier(.25, .5, .5, .9) 1s;
+}
+
+.modal.modal-slide-in-right.in .modal-content {
+  opacity: 1;
+  -webkit-transform: translate(0px, 0px);
+  -ms-transform: translate(0px, 0px);
+  -o-transform: translate(0px, 0px);
+  transform: translate(0px, 0px);
+}
+
