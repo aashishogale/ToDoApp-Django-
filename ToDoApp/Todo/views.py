@@ -1025,7 +1025,10 @@ def deleteArchivedNotes():
     # for user1 in users:
     #     user = user1.username
     #     print(user1.username)
+
     logger.warning("users got")
+    from django import db
+    print(db.connections.databases)
     notes=Notes.objects.all()
     logger.info("notes gotten")
     for note in notes:

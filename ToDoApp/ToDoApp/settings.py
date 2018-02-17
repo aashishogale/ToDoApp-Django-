@@ -42,14 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'social_django',
  'django_celery_results',
+ 
     # 'rest_framework.authtoken',
     'Todo',
 
 
 ]
-# CELERY_BROKER_TRANSPORT = "djkombu.transport.DatabaseTransport"
+#CELERY_BROKER_TRANSPORT = "djkombu.transport.DatabaseTransport"
 
-# INSTALLED_APPS += ('djkombu',)
+INSTALLED_APPS += ('djcelery',)
 SITE_ID = 1
 
 
@@ -90,7 +91,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ToDoApp.wsgi.application'
 
-
+BROKER_BACKEND =  os.getenv('CELERY_RESULT_BACKEND')
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -105,6 +106,9 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+CELERY_BROKER_URL = os.getenv('CELERY_RESULT_BACKEND')
+
 # When using TCP connections
 # CACHES = {
 #     'default': {
@@ -263,8 +267,7 @@ REDIRECT_URI_FACEBOOK=os.getenv('REDIRECT_URI_FACEBOOK')
 
 CELERY_IMPORTS=("Todo.tasks")
 
-CELERY_BROKER_HOST=os.getenv('CELERY_RESULT_BACKEND')
-#CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+#CELERY_BROKER_HOST=os.getenv('CELERY_RESULT_BACKEND')
 CELERY_ALWAYS_EAGER=True
 
 # Static files (CSS, JavaScript, Images)
@@ -274,6 +277,19 @@ REGISTRATION_URL=BASE_URL+'/ToDoApp/#!/register'
 HOME_URL=BASE_URL+'/ToDoApp/'
 STATIC_URL = '/static/'
 
+CELERY_RESULT_BACKEND=os.getenv('CELERY_RESULT_BACKEND')
+CELERY_DATABASES= {
+    'default': {
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('HOST'),
+        'PORT': '',
+    }
+}
+print(CELERY_RESULT_BACKEND)
 MEDIA_URL = '/media/'
 #MEDIA_ROOT = 'media/'
 # print(os.path.join(BASE_DIR, '/media/'))

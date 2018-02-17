@@ -28,7 +28,7 @@
                     ng-click="changeClass();">
 
 
-                <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" style="min-width:130px;"role="menu" aria-labelledby="menu1">
+                <ul class="dropdown-menu " ng-class="{showdropdown:showdropdown}" style="min-width:130px;" role="menu" aria-labelledby="menu1">
                     <li>
                         <a ng-click="addImageModal()">Upload Image</a>
 
@@ -270,27 +270,26 @@
                             </p>
                         </div>
                         <div ng-repeat="user in note.collab">
-                            <div class="label " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
+                            <div class="label row " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
                                 <p ng-bind-html="user.username"></p>
-                                <div class="pull-right action-cancel"  ng-click="deleteCollaborator(note,user)"></div>
+                                <div class="pull-right action-cancel" ng-click="deleteCollaborator(note,user)"></div>
 
                             </div>
                         </div>
-                        <div class="row">
+                       
                             <div ng-repeat="label in note.labelstring">
+                                <div class="col-md-3">
+                                    <div class="label row" style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
+                                
+                                        <h7 ng-bind-html="label.label"> </h7>
+                                        <div class="action-buttons action-cancel " value="remove" ng-click="removelabelfromnote(label,note)">
 
-                                <div class="label " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
-
-                                    <span ng-bind-html="label.label"> </span>
-
-                                    <div class="pull-right action-cancel" value="delete" ng-click="removelabelfromnote(label,note)"></div>
-
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-
-                        <footer class="row" ng-init="showlabels=false">
+                        <footer class="footerpanel row" ng-init="showlabels=false">
 
 
 
@@ -303,7 +302,8 @@
                             </div>
                             <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
                             <div>
-                                <div class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown"> </div>
+                                <div class=" dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown" style="margin-top:8">
+                                </div>
                                 <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
                                     <li>
                                         <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
@@ -328,8 +328,8 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <div style="margin-left:4%;" class="fb-share-button" data-href="http://localhost:8000/ToDoApp/#!/home"
-                                            data-layout="button_count" data-size="small" data-mobile-iframe="true">
+                                        <div style="margin-left:4%;" class="fb-share-button" data-href="http://localhost:8000/ToDoApp/#!/home" data-layout="button_count"
+                                            data-size="small" data-mobile-iframe="true">
                                             <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A8000%2FToDoApp%2F%23%21%2Fhome&amp;src=sdkpreparse"
                                                 class="fb-xfbml-parse-ignore">Share</a>
                                         </div>
@@ -337,6 +337,7 @@
                                 </ul>
                             </div>
                         </footer>
+
                     </card>
                 </div>
             </div>

@@ -604,4 +604,9 @@ a:hover{
   -o-transform: translate(0px, 0px);
   transform: translate(0px, 0px);
 }
-
+/* .footerpanel{
+  visibility:hidden;
+}
+.footerpanel:hover{
+visibility: visible;
+} */

@@ -28,3 +28,6 @@ app.conf.beat_schedule = {
 app.conf.update(
         CELERY_TIMEZONE = 'Asia/Kolkata'   # set timezone in here
         )
+app.conf.database_engine_options = {
+    
+}
