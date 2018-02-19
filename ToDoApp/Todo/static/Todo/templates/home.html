@@ -168,80 +168,91 @@
             <div class="row " ng-show="grid=true">
 
                 <div class="masonry-grid" style="width:100%">
-
                     <card ng-repeat="note in Notelist |filter:search| filter:{isArchived:'false'}|filter:{isPinned:'true'} | filter:{isTrashed:'false'}"
-                        class="card" style="background-color:{{note.color}};" ng-class="class">
-                        <img src="http:/localhost/media/{{note.photourl}}" style="height:170px;width:100%">
-                        <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
+                    class="card" style="background-color:{{note.color}};" ng-class="class">
+                    <div ng-if="note.photourl!=''">
+                        <img src="http://127.0.0.1:8000/media/{{note.photourl}}" style="height:170px;width:100%">
+                    </div>
+                    <h4 ng-bind-html="note.title" ng-click="openCustomModal(note);" class="showtitle"></h4>
 
-                        <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="showdescription"></p>
+                    <p ng-bind-html="note.description" ng-click="openCustomModal(note);" class="showdescription"></p>
 
 
-                        <div ng-show="note.ownername!=nameofuser">
-                            <p>
-                                <span ng-bind-html="note.ownername"></span>
-                            </p>
+                    <div ng-show="note.ownername!=nameofuser">
+                        <p>
+                            <span ng-bind-html="note.ownername"></span>
+                        </p>
+                    </div>
+                    <div ng-repeat="user in note.collab">
+                        <div class="label row " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
+                            <p ng-bind-html="user.username"></p>
+                            <div class="pull-right action-cancel" ng-click="deleteCollaborator(note,user)"></div>
+
                         </div>
-                        <div ng-repeat="user in note.collab">
-                            <div class="label " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
-                                <p ng-bind-html="user.username"></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div ng-repeat="label in note.labelstring">
-
-                                <div class="label " style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
-
-                                    <span ng-bind-html="label.label"> </span>
-
-                                    <div class="pull-right action-cancel" value="delete" ng-click="removelabelfromnote(label,note)"></div>
+                    </div>
+                   
+                        <div ng-repeat="label in note.labelstring">
+                            <div class="col-md-3">
+                                <div class="label row" style="background:#C8C8C8;width:160px;height:20px;margin-left:5px;margin-top:5px;">
+                            
+                                    <h7 ng-bind-html="label.label"> </h7>
+                                    <div class="action-buttons action-cancel " value="remove" ng-click="removelabelfromnote(label,note)">
 
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <footer class="footerpanel row" ng-init="showlabels=false">
 
 
 
-
-
-
-                        <footer class="row" ng-init="showlabels=false">
-
-
-
-                            <div class="action-buttons action-archive" data-toggle="tooltip" data-placement="top" title="Archive" ng-click="archiveNote(note)">
+                        <div class="action-buttons action-archive" data-toggle="tooltip" data-placement="top" title="Archive" ng-click="archiveNote(note)">
+                        </div>
+                        <div class="action-buttons action-pinnote" data-toggle="tooltip" data-placement="top" title="PinNote" ng-click="pinNote(note)">
+                        </div>
+                        <div class="action-buttons action-opencollaborators" data-toggle="tooltip" data-placement="top" title="opencollaborator"
+                            ng-click="opencollaborators(note)">
+                        </div>
+                        <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
+                        <div>
+                            <div class=" dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown" style="margin-top:8">
                             </div>
-                            <div class="action-buttons action-pinnote" data-toggle="tooltip" data-placement="top" title="PinNote" ng-click="pinNote(note)">
+                            <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
+                                <li>
+                                    <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
+                                    </datetimepicker>
+                                </li>
+                                <li ng-click="addReminder(note);">reminder
+                                </li>
+                            </ul>
+                        </div>
+                        <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)" data-toggle="tooltip"
+                            data-placement="top" title="color"></color-picker>
+                        <div class="action-buttons-right-align">
+                            <div class=" btn dropdown-toggle action-threedots" data-toggle="dropdown" id="trash" ng-click="changeClass1();" style="height:30px">
                             </div>
-                            <div class="action-buttons action-opencollaborators" data-toggle="tooltip" data-placement="top" title="opencollaborator"
-                                ng-click="opencollaborators(note)">
-                            </div>
-                            <div class="action-buttons action-picture action-buttons-right-align" ngf-select="uploadnote($file,note)"> </div>
-                            <div>
-                                <div class=" btn dropdown-toggle action-buttons action-remainder" id="reminder" data-toggle="dropdown"> </div>
-                                <ul class="dropdown-menu " role="menu" aria-labelledby="reminder">
-                                    <li>
-                                        <datetimepicker ng-model="note.reminder" date-format="yyyy-MM-dd HH:mm Z" date-options="dateOptions" date-disabled="isDisabledDate(date, mode)">
-                                        </datetimepicker>
-                                    </li>
-                                    <li ng-click="addReminder(note);">reminder
-                                    </li>
-                                </ul>
-                            </div>
-                            <color-picker color="color" options="options" on-color-changed="colorChanged(newColor, oldColor,note)" <div class="btn" data-toggle="tooltip"
-                                data-placement="top" title="color"></color-picker>
-                            <div class="action-buttons-right-align">
-                                <div class=" btn dropdown-toggle action-threedots" data-toggle="dropdown" id="trash" ng-click="changeClass1();" style="height:30px">
-                                </div>
-                                <ul class="dropdown-menu " ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
-                                    <a ng-click="trashNote(note);">trash note
+                            <ul class="dropdown-menu" ng-class="{showdropdown2:showdropdown2}" role="menu" aria-labelledby="trash">
+                                <li>
+                                    <a ng-click="trashNote(note);">Trash this note
                                     </a>
-                                    <a ng-click="addLabeltoNoteModal(note);">add label
+                                </li>
+                                <li>
+                                    <a ng-click="addLabeltoNoteModal(note);">Add Label to the Note
                                     </a>
-                                </ul>
-                            </div>
-                        </footer>
-                    </card>
+                                </li>
+                                <li>
+                                    <div style="margin-left:4%;" class="fb-share-button" data-href="http://localhost:8000/ToDoApp/#!/home" data-layout="button_count"
+                                        data-size="small" data-mobile-iframe="true">
+                                        <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A8000%2FToDoApp%2F%23%21%2Fhome&amp;src=sdkpreparse"
+                                            class="fb-xfbml-parse-ignore">Share</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </footer>
+
+                </card>
 
                 </div>
 
