@@ -3546,3 +3546,23 @@ archived notes entered
 users got
 archived notes entered
 users got
+archived notes entered
+users got
+archived notes entered
+users got
+archived notes entered
+users got
+archived notes entered
+users got
+archived notes entered
+users got
+archived notes entered
+users got
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2208
+notes retrieved
+image retrieved successfully
+Not Found: /media/{{note.photourl}}
+Not Found: /localhost/media/{{note.photourl}}
+"GET /media/%7B%7Bnote.photourl%7D%7D HTTP/1.1" 404 1825
+"GET /localhost/media/%7B%7Bnote.photourl%7D%7D HTTP/1.1" 404 2282
