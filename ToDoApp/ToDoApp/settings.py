@@ -41,18 +41,18 @@ INSTALLED_APPS = [
     'rest_framework',
     'django.contrib.sites',
     'social_django',
- 'django_celery_results',
- 
+    'django_celery_beat',
+
     # 'rest_framework.authtoken',
     'Todo',
 
 
 ]
 #CELERY_BROKER_TRANSPORT = "djkombu.transport.DatabaseTransport"
-
+CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
 INSTALLED_APPS += ('djcelery',)
 SITE_ID = 1
-
+SERVICES_MIGRATED = True 
 
 MIDDLEWARE = [
     #'django.middleware.cache.UpdateCacheMiddleware',
@@ -91,7 +91,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ToDoApp.wsgi.application'
 
-BROKER_BACKEND =  os.getenv('CELERY_RESULT_BACKEND')
+# BROKER_BACKEND =  os.getenv('CELERY_RESULT_BACKEND')
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -107,7 +107,7 @@ DATABASES = {
     }
 }
 
-CELERY_BROKER_URL = os.getenv('CELERY_RESULT_BACKEND')
+# CELERY_BROKER_URL = os.getenv('CELERY_RESULT_BACKEND')
 
 # When using TCP connections
 # CACHES = {
@@ -265,10 +265,10 @@ GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID')
 REDIRECT_URI_GOOGLE=os.getenv('REDIRECT_URI')
 REDIRECT_URI_FACEBOOK=os.getenv('REDIRECT_URI_FACEBOOK')
 
-CELERY_IMPORTS=("Todo.tasks")
+# CELERY_IMPORTS=("Todo.tasks")
 
-#CELERY_BROKER_HOST=os.getenv('CELERY_RESULT_BACKEND')
-CELERY_ALWAYS_EAGER=True
+# #CELERY_BROKER_HOST=os.getenv('CELERY_RESULT_BACKEND')
+# CELERY_ALWAYS_EAGER=True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -277,23 +277,23 @@ REGISTRATION_URL=BASE_URL+'/ToDoApp/#!/register'
 HOME_URL=BASE_URL+'/ToDoApp/'
 STATIC_URL = '/static/'
 
-CELERY_RESULT_BACKEND=os.getenv('CELERY_RESULT_BACKEND')
-CELERY_DATABASES= {
-    'default': {
+# CELERY_RESULT_BACKEND=os.getenv('CELERY_RESULT_BACKEND')
+# CELERY_DATABASES= {
+#     'default': {
 
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('HOST'),
-        'PORT': '',
-    }
-}
-print(CELERY_RESULT_BACKEND)
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv('DATABASE_NAME'),
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         'HOST': os.getenv('HOST'),
+#         'PORT': '',
+#     }
+# }
+# print(CELERY_RESULT_BACKEND)
 MEDIA_URL = '/media/'
 #MEDIA_ROOT = 'media/'
 # print(os.path.join(BASE_DIR, '/media/'))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-import djcelery
-djcelery.setup_loader()
+# import djcelery
+# djcelery.setup_loader()

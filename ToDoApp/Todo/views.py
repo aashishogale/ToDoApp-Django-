@@ -131,11 +131,7 @@ class UserLoginView(GenericAPIView):
             # set the cache
             cache = redis.StrictRedis(host='localhost', decode_responses=True)
             cache.set(jwttoken, user.username)
-            # most_viewed='abcd'
-            # logger.warning("logged in successfully")
-            # cache.set('news.stories.most_viewed', most_viewed)
-            # data = cache.get_many(['news.stories.most_viewed'])
-            # set the data for response
+
             data = {
                 "username": user.username,
                 "id": user.id,
@@ -507,12 +503,7 @@ class NoteList(generics.ListAPIView):
         final_queryset = list(chain(queryset2, queryset))
         return final_queryset
 
-        # if queryset2 and  queryset:
-        #
-        #     response_data['data'] = final_queryset
-        # else:
-        #     response_data['data'] = []
-        # return response_data
+     
 
 
 '''
@@ -671,7 +662,13 @@ class GetUserByUserName(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+'''
+    Class:AddImage
+    Param: generics.GenericAPIView
+    Overview / Description:  Add Image
 
+ 
+'''
 class AddImage(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
@@ -706,7 +703,13 @@ class AddImage(GenericAPIView):
 
         return Response(status=status.HTTP_200_OK)
 
+'''
+    Class:GetImage
+    Param: generics.GenericAPIView
+    Overview / Description:  Get Image
 
+ 
+'''
 class GetImage(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
@@ -731,6 +734,13 @@ class GetImage(GenericAPIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
+'''
+    Class:GetImage
+    Param: generics.GenericAPIView
+    Overview / Description:  Get Image
+
+ 
+'''
 class LabelCreate(GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
@@ -766,7 +776,13 @@ class AddNoteToLabel(GenericAPIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
+'''
+    Class:Get All Labels
+    Param: generics.ListCreateAPIView
+    Overview / Description:  Get All Labels
 
+ 
+'''
 class GetAllLabels(generics.ListCreateAPIView):
     serializer_class = LabelSerializer
 
@@ -805,7 +821,13 @@ class GetAllLabelsFromNote(generics.ListCreateAPIView):
 
         return labels
 
+'''
+    Class:GetCollabFromNote
+    Param: generics.ListAPIView
+    Overview / Description:  Get Collab from Note
 
+ 
+'''
 class GetCollabFromNote(generics.ListAPIView):
     serializer_class = UserSerializer
 
@@ -891,7 +913,7 @@ class NotePhotoDelete(GenericAPIView):
         noteid = kwargs['noteid']
         note = Notes.objects.get(id=noteid)
         note.photourl = ''
-        note.photo.delete(save=true)
+        note.photo.delete(save=True)
         return Response(status=status.HTTP_200_OK)
 
 
