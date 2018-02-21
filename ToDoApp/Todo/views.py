@@ -824,7 +824,7 @@ class GetAllLabelsFromNote(generics.ListCreateAPIView):
 '''
     Class:GetCollabFromNote
     Param: generics.ListAPIView
-    Overview / Description:  Get Collab from Note
+    Overview / Description:  Get Collaborators from Note
 
  
 '''
@@ -863,7 +863,13 @@ class GetCollabFromNote(generics.ListAPIView):
 
         return user
 
+'''
+    Class:GetNotesFromLabel
+    Param: generics.ListAPIView
+    Overview / Description:  Get Notes from Label
 
+ 
+'''
 class GetNotesFromLabel(generics.ListAPIView):
     serializer_class = NoteSerializer
 
@@ -872,7 +878,13 @@ class GetNotesFromLabel(generics.ListAPIView):
         labelednotes = Notes.objects.filter(label=labelid)
         return labelednotes
 
+'''
+    Class: AddImageToNote
+    Param: GenericAPIView
+    Overview / Description: Add Image to note
 
+ 
+'''
 class AddImageToNote(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
