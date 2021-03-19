@@ -25,7 +25,7 @@ django-kombu==0.9.4
 django-online-users==0.3
 django-redis==4.4.4
 django-redis-cache==1.7.1
-djangorestframework==3.7.7
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 eventemitter==0.2.0
 hyperlink==17.3.1
