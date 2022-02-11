@@ -54,7 +54,7 @@ six==1.10.0
 social-auth-app-django==2.1.0
 social-auth-core==1.6.0
 SQLAlchemy==1.2.3
-Twisted==17.9.0
+Twisted==22.1.0
 txaio==2.8.2
 urllib3==1.22
 vine==1.1.4
