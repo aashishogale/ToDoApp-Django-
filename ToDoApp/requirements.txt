@@ -19,7 +19,7 @@ Django==2.0.1
 django-appconf==1.0.2
 django-celery==3.2.2
 django-celery-email==2.0.0
-django-celery-results==1.0.1
+django-celery-results==2.4.0
 django-dotenv==1.4.2
 django-kombu==0.9.4
 django-online-users==0.3
